@@ -1,0 +1,1754 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#1A1A1A">
+<title>New York Travel System</title>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Roboto+Condensed:ital,wght@0,300;0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --cream: #F5F0E8;
+  --black: #1A1A1A;
+  --white: #FFFFFF;
+  --yellow: #FCCC0A;
+  --red: #EE352E;
+  --green: #00933C;
+  --blue: #0039A6;
+  --orange: #FF6319;
+  --purple: #B933AD;
+  --gray: #808183;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+
+html { height:100%; background:var(--black); }
+
+body {
+  font-family:'Roboto Condensed', sans-serif;
+  background:var(--cream);
+  height:100%;
+  max-width:430px;
+  margin:0 auto;
+  overflow:hidden;
+  position:relative;
+}
+
+/* ── SCREENS ── */
+.screen {
+  position:absolute;
+  inset:0;
+  background:var(--cream);
+  display:flex;
+  flex-direction:column;
+  transform:translateX(100%);
+  transition:transform 0.28s cubic-bezier(0.4,0,0.2,1);
+  overflow:hidden;
+}
+.screen.home { transform:translateX(0); }
+.screen.active { transform:translateX(0); }
+.screen.behind { transform:translateX(-30%); }
+
+/* ── HOME ── */
+#homeScreen {
+  justify-content:space-evenly;
+  background:var(--cream);
+}
+
+.home-header {
+  padding:48px 24px 0;
+  flex-shrink:0;
+}
+
+.home-eyebrow {
+  font-family:'Oswald', sans-serif;
+  font-weight:400;
+  font-size:11px;
+  letter-spacing:3.5px;
+  text-transform:uppercase;
+  color:var(--black);
+  opacity:0.45;
+  margin-bottom:10px;
+}
+
+.home-rule {
+  height:1px;
+  background:rgba(0,0,0,0.2);
+  margin-bottom:16px;
+}
+
+.home-title {
+  font-family:'Oswald', sans-serif;
+  font-weight:700;
+  font-size:58px;
+  line-height:0.93;
+  color:var(--black);
+  letter-spacing:-1px;
+}
+
+.home-dots-grid {
+  display:grid;
+  grid-template-columns:130px 130px;
+  grid-template-rows:130px 130px;
+  gap:18px;
+  justify-content:center;
+}
+
+.home-dot-btn {
+  width:130px; height:130px;
+  border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  font-family:'Oswald', sans-serif;
+  font-weight:700;
+  font-size:46px;
+  color:var(--white);
+  cursor:pointer;
+  border:none;
+  transition:transform 0.12s;
+}
+.home-dot-btn:active { transform:scale(0.93); }
+.home-dot-btn.b { background:var(--red); }
+.home-dot-btn.w { background:var(--yellow); color:var(--black); }
+.home-dot-btn.i { background:var(--green); }
+.home-dot-btn.s { background:var(--blue); }
+
+.home-status-bar {
+  background:var(--black);
+  padding:14px 28px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  flex-shrink:0;
+}
+.home-status-date {
+  font-family:'Oswald', sans-serif;
+  font-weight:600;
+  font-size:14px;
+  letter-spacing:2px;
+  color:var(--white);
+  text-transform:uppercase;
+}
+.home-status-city {
+  font-family:'Oswald', sans-serif;
+  font-weight:400;
+  font-size:12px;
+  letter-spacing:2px;
+  color:var(--white);
+  opacity:0.5;
+  text-transform:uppercase;
+}
+
+/* ── SHARED INNER SCREEN STRUCTURE ── */
+.screen-header {
+  background:var(--cream);
+  padding:20px 20px 16px;
+  border-bottom:3px solid var(--black);
+  flex-shrink:0;
+}
+.screen-header-row {
+  display:flex;
+  align-items:center;
+  gap:14px;
+}
+.back-btn {
+  width:36px; height:36px;
+  border-radius:50%;
+  background:var(--black);
+  border:none;
+  color:var(--white);
+  font-size:18px;
+  cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+  flex-shrink:0;
+  transition:opacity 0.1s;
+}
+.back-btn:active { opacity:0.7; }
+.screen-dot {
+  width:44px; height:44px;
+  border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  font-family:'Oswald', sans-serif;
+  font-weight:700;
+  font-size:20px;
+  flex-shrink:0;
+}
+.screen-dot.b { background:var(--red); color:var(--white); }
+.screen-dot.w { background:var(--yellow); color:var(--black); }
+.screen-dot.i { background:var(--green); color:var(--white); }
+.screen-dot.s { background:var(--blue); color:var(--white); }
+
+.screen-title {
+  font-family:'Oswald', sans-serif;
+  font-weight:700;
+  font-size:22px;
+  letter-spacing:1px;
+  color:var(--black);
+  text-transform:uppercase;
+}
+.screen-subtitle {
+  font-size:11px;
+  letter-spacing:1.5px;
+  color:var(--black);
+  opacity:0.4;
+  text-transform:uppercase;
+  margin-top:1px;
+}
+
+/* ── BUDGET SCREEN ── */
+.day-strip {
+  background:var(--black);
+  height:50px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 8px;
+  flex-shrink:0;
+}
+.day-strip-btn {
+  background:none; border:none;
+  color:var(--white); opacity:0.5;
+  font-size:18px; cursor:pointer;
+  padding:10px 14px;
+  font-family:'Oswald', sans-serif;
+  transition:opacity 0.1s;
+}
+.day-strip-btn:active { opacity:1; }
+.day-strip-center { text-align:center; flex:1; }
+.day-strip-date {
+  font-family:'Oswald', sans-serif;
+  font-weight:600;
+  font-size:15px;
+  color:var(--white);
+  letter-spacing:2px;
+  text-transform:uppercase;
+}
+.day-strip-sub {
+  font-size:10px;
+  color:var(--white);
+  opacity:0.4;
+  letter-spacing:2px;
+  text-transform:uppercase;
+  margin-top:1px;
+}
+
+.budget-panels {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  border-bottom:3px solid var(--black);
+  flex-shrink:0;
+}
+.budget-panel {
+  padding:14px 16px 12px;
+  border-right:3px solid var(--black);
+}
+.budget-panel:last-child { border-right:none; }
+.bp-label {
+  font-size:9px;
+  font-weight:700;
+  letter-spacing:2.5px;
+  text-transform:uppercase;
+  color:var(--black);
+  opacity:0.4;
+  margin-bottom:5px;
+}
+.bp-amount-row { display:flex; align-items:baseline; gap:2px; }
+.bp-sign {
+  font-family:'Oswald', sans-serif;
+  font-size:16px;
+  color:var(--black);
+  opacity:0.5;
+}
+.bp-amount {
+  font-family:'Oswald', sans-serif;
+  font-weight:700;
+  font-size:38px;
+  line-height:1;
+  color:var(--black);
+  letter-spacing:-1px;
+  transition:color 0.3s;
+}
+.bp-amount.warn { color:var(--orange); }
+.bp-amount.danger { color:var(--red); }
+.bp-sub {
+  font-size:10px;
+  color:var(--black);
+  opacity:0.4;
+  margin-top:3px;
+  letter-spacing:0.3px;
+}
+.bp-track {
+  height:5px;
+  background:rgba(0,0,0,0.1);
+  margin-top:8px;
+  overflow:hidden;
+}
+.bp-fill {
+  height:100%;
+  background:var(--green);
+  transition:width 0.4s ease, background 0.3s;
+}
+.bp-fill.warn { background:var(--orange); }
+.bp-fill.danger { background:var(--red); }
+
+/* entries scroll area */
+.entries-scroll {
+  flex:1;
+  overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+  padding-bottom:80px;
+}
+
+/* TICKET STUB */
+.ticket-stub {
+  margin:12px 16px 0;
+  border:2px solid var(--black);
+  background:var(--white);
+  animation:stubIn 0.2s ease;
+  cursor:pointer;
+}
+@keyframes stubIn {
+  from { opacity:0; transform:translateY(-6px); }
+  to { opacity:1; transform:translateY(0); }
+}
+.stub-top {
+  background:var(--black);
+  padding:10px 14px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+.stub-dot {
+  width:28px; height:28px;
+  border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  font-family:'Oswald', sans-serif;
+  font-weight:700;
+  font-size:13px;
+  color:var(--white);
+  flex-shrink:0;
+}
+.stub-dot.c1 { background:var(--orange); }
+.stub-dot.c2 { background:var(--red); }
+.stub-dot.c3 { background:var(--blue); }
+.stub-dot.c4 { background:var(--purple); }
+
+.stub-name {
+  font-family:'Oswald', sans-serif;
+  font-weight:500;
+  font-size:15px;
+  color:var(--white);
+  letter-spacing:0.5px;
+  flex:1;
+  padding:0 12px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.stub-amount {
+  font-family:'Oswald', sans-serif;
+  font-weight:700;
+  font-size:20px;
+  color:var(--yellow);
+  letter-spacing:0.5px;
+  flex-shrink:0;
+}
+.stub-tear {
+  border-top:2px dashed rgba(0,0,0,0.18);
+  margin:0 14px;
+  padding:7px 0 7px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+.stub-meta {
+  font-size:10px;
+  color:var(--black);
+  opacity:0.4;
+  letter-spacing:1.5px;
+  text-transform:uppercase;
+}
+.stub-tag {
+  font-size:9px;
+  font-weight:700;
+  letter-spacing:2px;
+  text-transform:uppercase;
+  padding:2px 6px;
+  border:1.5px solid rgba(0,0,0,0.15);
+  color:var(--black);
+  opacity:0.5;
+}
+
+.empty-state {
+  padding:48px 20px;
+  text-align:center;
+}
+.empty-dots {
+  display:flex; justify-content:center; gap:10px; margin-bottom:16px;
+}
+.empty-dot {
+  width:14px; height:14px;
+  border-radius:50%;
+  opacity:0.15;
+}
+.empty-text {
+  font-family:'Oswald', sans-serif;
+  font-size:13px;
+  letter-spacing:3px;
+  text-transform:uppercase;
+  color:var(--black);
+  opacity:0.25;
+}
+
+/* ADD BUTTON */
+.add-expense-bar {
+  position:fixed;
+  bottom:0;
+  left:50%; transform:translateX(-50%);
+  width:100%;
+  max-width:430px;
+  background:var(--yellow);
+  border-top:3px solid var(--black);
+  padding:14px 20px;
+  padding-bottom:max(14px, env(safe-area-inset-bottom));
+  cursor:pointer;
+  z-index:50;
+  display:none;
+}
+.add-expense-bar.visible { display:block; }
+.add-expense-bar-inner {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+.add-expense-label {
+  font-family:'Oswald', sans-serif;
+  font-weight:700;
+  font-size:16px;
+  letter-spacing:2px;
+  color:var(--black);
+  text-transform:uppercase;
+}
+.add-expense-arrow {
+  font-size:20px;
+  color:var(--black);
+}
+
+/* ── BOTTOM SHEET ── */
+.sheet-overlay {
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0);
+  z-index:100;
+  pointer-events:none;
+  transition:background 0.3s;
+  max-width:430px;
+  left:50%; transform:translateX(-50%);
+}
+.sheet-overlay.open {
+  background:rgba(0,0,0,0.5);
+  pointer-events:all;
+}
+.bottom-sheet {
+  position:absolute;
+  bottom:0; left:0; right:0;
+  background:var(--cream);
+  border-top:3px solid var(--black);
+  transform:translateY(100%);
+  transition:transform 0.3s cubic-bezier(0.4,0,0.2,1);
+  padding-bottom:max(20px, env(safe-area-inset-bottom));
+}
+.sheet-overlay.open .bottom-sheet {
+  transform:translateY(0);
+}
+.sheet-header {
+  background:var(--black);
+  padding:14px 20px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+.sheet-title {
+  font-family:'Oswald', sans-serif;
+  font-weight:700;
+  font-size:16px;
+  letter-spacing:3px;
+  color:var(--white);
+  text-transform:uppercase;
+}
+.sheet-close {
+  background:none; border:none;
+  color:var(--white); opacity:0.5;
+  font-size:22px; cursor:pointer;
+  line-height:1;
+  padding:2px 4px;
+}
+.sheet-body { padding:20px 20px 0; }
+
+.sheet-field { margin-bottom:16px; }
+.sheet-label {
+  font-size:9px;
+  font-weight:700;
+  letter-spacing:2.5px;
+  text-transform:uppercase;
+  color:var(--black);
+  opacity:0.4;
+  margin-bottom:6px;
+  display:block;
+}
+.sheet-input {
+  width:100%;
+  border:2px solid var(--black);
+  background:var(--white);
+  padding:13px 14px;
+  font-family:'Roboto Condensed', sans-serif;
+  font-size:16px;
+  color:var(--black);
+  outline:none;
+  border-radius:0;
+  -webkit-appearance:none;
+}
+.sheet-input:focus { border-color:var(--blue); background:var(--white); }
+
+.cat-row {
+  display:flex;
+  gap:12px;
+  flex-wrap:wrap;
+}
+.cat-btn {
+  width:52px; height:52px;
+  border-radius:50%;
+  border:3px solid transparent;
+  display:flex; flex-direction:column;
+  align-items:center; justify-content:center;
+  font-family:'Oswald', sans-serif;
+  font-weight:700;
+  font-size:18px;
+  color:var(--white);
+  cursor:pointer;
+  transition:transform 0.1s, border-color 0.1s;
+  gap:0;
+}
+.cat-btn:active { transform:scale(0.9); }
+.cat-btn.selected { border-color:var(--black); transform:scale(1.1); }
+.cat-btn.c1 { background:var(--orange); }
+.cat-btn.c2 { background:var(--red); }
+.cat-btn.c3 { background:var(--blue); }
+.cat-btn.c4 { background:var(--purple); }
+.cat-btn-label {
+  font-size:8px;
+  letter-spacing:1px;
+  margin-top:2px;
+  opacity:0.85;
+}
+
+.sheet-submit {
+  width:100%;
+  height:52px;
+  background:var(--black);
+  border:none;
+  color:var(--yellow);
+  font-family:'Oswald', sans-serif;
+  font-weight:700;
+  font-size:16px;
+  letter-spacing:3px;
+  text-transform:uppercase;
+  cursor:pointer;
+  margin-top:20px;
+  transition:opacity 0.1s;
+}
+.sheet-submit:active { opacity:0.8; }
+
+/* ── WISHLIST SCREEN ── */
+.filter-row {
+  display:flex;
+  gap:0;
+  border-bottom:3px solid var(--black);
+  overflow-x:auto;
+  flex-shrink:0;
+  scrollbar-width:none;
+}
+.filter-row::-webkit-scrollbar { display:none; }
+.filter-btn {
+  font-family:'Oswald', sans-serif;
+  font-weight:600;
+  font-size:12px;
+  letter-spacing:2px;
+  text-transform:uppercase;
+  padding:12px 16px;
+  border:none;
+  border-right:2px solid var(--black);
+  background:var(--cream);
+  color:var(--black);
+  cursor:pointer;
+  white-space:nowrap;
+  opacity:0.5;
+  transition:all 0.1s;
+  flex-shrink:0;
+}
+.filter-btn.active {
+  background:var(--black);
+  color:var(--white);
+  opacity:1;
+}
+
+.search-bar {
+  padding:10px 16px;
+  border-bottom:2px solid rgba(0,0,0,0.1);
+  flex-shrink:0;
+}
+.search-input {
+  width:100%;
+  border:2px solid rgba(0,0,0,0.15);
+  background:var(--white);
+  padding:9px 12px;
+  font-family:'Roboto Condensed', sans-serif;
+  font-size:15px;
+  color:var(--black);
+  outline:none;
+  border-radius:0;
+  -webkit-appearance:none;
+}
+.search-input:focus { border-color:var(--black); }
+
+.wishlist-scroll {
+  flex:1;
+  overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+  padding-bottom:80px;
+}
+
+.wish-item {
+  display:flex;
+  align-items:center;
+  padding:14px 16px;
+  border-bottom:1px solid rgba(0,0,0,0.07);
+  gap:14px;
+  background:var(--cream);
+  transition:opacity 0.2s;
+}
+.wish-item.done { opacity:0.4; }
+.wish-check {
+  width:24px; height:24px;
+  border:2.5px solid var(--black);
+  display:flex; align-items:center; justify-content:center;
+  cursor:pointer;
+  flex-shrink:0;
+  transition:background 0.1s;
+}
+.wish-check.checked { background:var(--black); }
+.wish-check.checked::after {
+  content:'✓';
+  color:var(--white);
+  font-size:14px;
+  font-weight:700;
+}
+.wish-name {
+  flex:1;
+  font-family:'Oswald', sans-serif;
+  font-weight:500;
+  font-size:16px;
+  color:var(--black);
+  letter-spacing:0.3px;
+}
+.wish-item.done .wish-name { text-decoration:line-through; }
+.wish-cat-tag {
+  font-size:9px;
+  font-weight:700;
+  letter-spacing:2px;
+  text-transform:uppercase;
+  padding:3px 7px;
+  border:1.5px solid var(--black);
+  color:var(--black);
+  opacity:0.4;
+  flex-shrink:0;
+}
+.wish-delete {
+  background:none; border:none;
+  font-size:12px; color:var(--black);
+  opacity:0.15; cursor:pointer;
+  padding:4px;
+  font-family:'Roboto Condensed', sans-serif;
+  letter-spacing:1px;
+  text-transform:uppercase;
+}
+.wish-delete:active { opacity:0.8; color:var(--red); }
+
+/* ── ITINERARY SCREEN ── */
+.itinerary-scroll {
+  flex:1;
+  overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+  padding:16px 16px 40px;
+}
+
+.day-card {
+  margin-bottom:12px;
+  border:2px solid var(--black);
+  overflow:hidden;
+}
+.day-card-header {
+  background:var(--black);
+  padding:10px 14px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+.day-card-date {
+  font-family:'Oswald', sans-serif;
+  font-weight:700;
+  font-size:14px;
+  letter-spacing:2px;
+  color:var(--white);
+  text-transform:uppercase;
+}
+.day-card-city {
+  font-size:10px;
+  color:var(--white);
+  opacity:0.45;
+  letter-spacing:2px;
+  text-transform:uppercase;
+}
+.day-card-badges {
+  display:flex;
+  gap:6px;
+  align-items:center;
+}
+.badge-free {
+  background:var(--red);
+  color:var(--white);
+  font-family:'Oswald', sans-serif;
+  font-weight:700;
+  font-size:9px;
+  letter-spacing:2px;
+  padding:2px 7px;
+  text-transform:uppercase;
+}
+.badge-today {
+  background:var(--yellow);
+  color:var(--black);
+  font-family:'Oswald', sans-serif;
+  font-weight:700;
+  font-size:9px;
+  letter-spacing:2px;
+  padding:2px 7px;
+  text-transform:uppercase;
+}
+.day-card-body {
+  background:var(--white);
+  padding:12px 14px;
+}
+.day-activity {
+  font-size:14px;
+  color:var(--black);
+  padding:4px 0;
+  letter-spacing:0.3px;
+  border-bottom:1px solid rgba(0,0,0,0.05);
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.day-activity:last-child { border-bottom:none; }
+.activity-confirmed {
+  color:var(--green);
+  font-size:12px;
+  flex-shrink:0;
+}
+
+.day-card-add {
+  background:none;
+  border:none;
+  width:100%;
+  padding:8px 14px;
+  text-align:left;
+  font-family:'Oswald', sans-serif;
+  font-size:12px;
+  letter-spacing:2px;
+  color:var(--black);
+  opacity:0.3;
+  cursor:pointer;
+  text-transform:uppercase;
+  border-top:1px dashed rgba(0,0,0,0.1);
+  transition:opacity 0.1s;
+}
+.day-card-add:active { opacity:0.7; }
+
+.day-activity {
+  font-size:14px;
+  color:var(--black);
+  padding:6px 0;
+  letter-spacing:0.3px;
+  border-bottom:1px solid rgba(0,0,0,0.05);
+  display:flex;
+  align-items:center;
+  gap:8px;
+  cursor:pointer;
+  transition:background 0.1s;
+  margin:0 -14px;
+  padding-left:14px;
+  padding-right:14px;
+}
+.day-activity:last-child { border-bottom:none; }
+.day-activity:active { background:rgba(0,0,0,0.04); }
+
+.activity-text { flex:1; }
+.activity-del {
+  background:none; border:none;
+  color:var(--red); opacity:0;
+  font-size:16px; cursor:pointer;
+  padding:4px 6px;
+  transition:opacity 0.15s;
+  flex-shrink:0;
+}
+.day-activity:hover .activity-del,
+.day-activity.editing .activity-del { opacity:0.6; }
+
+/* inline edit input */
+.activity-edit-input {
+  flex:1;
+  border:none;
+  border-bottom:2px solid var(--blue);
+  background:transparent;
+  font-family:'Roboto Condensed', sans-serif;
+  font-size:14px;
+  color:var(--black);
+  outline:none;
+  padding:2px 0;
+}
+/* ── SUMMARY SCREEN ── */
+.summary-scroll {
+  flex:1;
+  overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+  padding-bottom:40px;
+}
+.summary-block {
+  padding:20px 20px 0;
+}
+.summary-block-title {
+  font-family:'Oswald', sans-serif;
+  font-size:10px;
+  font-weight:700;
+  letter-spacing:3px;
+  text-transform:uppercase;
+  color:var(--black);
+  opacity:0.35;
+  padding-bottom:10px;
+  border-bottom:2px solid rgba(0,0,0,0.1);
+  margin-bottom:4px;
+}
+.summary-stat {
+  display:flex;
+  justify-content:space-between;
+  align-items:baseline;
+  padding:11px 0;
+  border-bottom:1px solid rgba(0,0,0,0.06);
+}
+.stat-label {
+  font-size:15px;
+  color:var(--black);
+  opacity:0.55;
+  letter-spacing:0.3px;
+}
+.stat-val {
+  font-family:'Oswald', sans-serif;
+  font-weight:700;
+  font-size:24px;
+  color:var(--black);
+}
+.cat-stat-row {
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:10px 0;
+  border-bottom:1px solid rgba(0,0,0,0.05);
+}
+.cat-stat-dot {
+  width:32px; height:32px;
+  border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  font-family:'Oswald', sans-serif;
+  font-weight:700;
+  font-size:14px;
+  color:var(--white);
+  flex-shrink:0;
+}
+.cat-stat-dot.c1 { background:var(--orange); }
+.cat-stat-dot.c2 { background:var(--red); }
+.cat-stat-dot.c3 { background:var(--blue); }
+.cat-stat-dot.c4 { background:var(--purple); }
+.cat-stat-name {
+  flex:1;
+  font-size:15px;
+  color:var(--black);
+  opacity:0.6;
+}
+.cat-stat-amt {
+  font-family:'Oswald', sans-serif;
+  font-weight:700;
+  font-size:20px;
+  color:var(--black);
+}
+
+/* ── SETUP SCREEN ── */
+.setup-scroll {
+  flex:1;
+  overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+  padding:0 0 40px;
+}
+.setup-block {
+  padding:20px 20px 0;
+  border-bottom:1px solid rgba(0,0,0,0.08);
+  padding-bottom:20px;
+}
+.setup-block-title {
+  font-family:'Oswald', sans-serif;
+  font-weight:700;
+  font-size:11px;
+  letter-spacing:3px;
+  text-transform:uppercase;
+  color:var(--black);
+  opacity:0.35;
+  margin-bottom:14px;
+}
+
+/* ── WISHLIST BOTTOM SHEET CATS ── */
+.wish-cat-selector {
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+}
+.wish-cat-btn {
+  font-family:'Oswald', sans-serif;
+  font-weight:600;
+  font-size:12px;
+  letter-spacing:1.5px;
+  text-transform:uppercase;
+  padding:8px 14px;
+  border:2px solid var(--black);
+  background:var(--cream);
+  color:var(--black);
+  cursor:pointer;
+  transition:all 0.1s;
+}
+.wish-cat-btn.selected {
+  background:var(--black);
+  color:var(--white);
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════════ HOME ══════════════ -->
+<div class="screen home" id="homeScreen">
+  <div class="home-header">
+    <div class="home-eyebrow">Personal Transit Authority</div>
+    <div class="home-rule"></div>
+    <div class="home-title">New York<br>Travel System</div>
+  </div>
+  <div class="home-dots-grid">
+    <button class="home-dot-btn b" onclick="goTo('budget')">B</button>
+    <button class="home-dot-btn w" onclick="goTo('wishlist')">W</button>
+    <button class="home-dot-btn i" onclick="goTo('itinerary')">I</button>
+    <button class="home-dot-btn s" onclick="goTo('summary')">S</button>
+  </div>
+  <div class="home-status-bar">
+    <div class="home-status-date" id="homeDate">—</div>
+    <div class="home-status-city" id="homeCity">—</div>
+  </div>
+</div>
+
+<!-- ══════════════ BUDGET ══════════════ -->
+<div class="screen" id="budgetScreen">
+  <div class="screen-header">
+    <div class="screen-header-row">
+      <button class="back-btn" onclick="goHome()">←</button>
+      <div class="screen-dot b">B</div>
+      <div>
+        <div class="screen-title">Budget</div>
+        <div class="screen-subtitle" id="budgetCityLabel">New York</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="day-strip">
+    <button class="day-strip-btn" onclick="changeDay(-1)">◀</button>
+    <div class="day-strip-center">
+      <div class="day-strip-date" id="dayStripDate">—</div>
+      <div class="day-strip-sub" id="dayStripSub">DAY 1 OF 15</div>
+    </div>
+    <button class="day-strip-btn" onclick="changeDay(1)">▶</button>
+  </div>
+
+  <div class="budget-panels">
+    <div class="budget-panel">
+      <div class="bp-label">Daily Left</div>
+      <div class="bp-amount-row">
+        <span class="bp-sign">$</span>
+        <span class="bp-amount" id="dailyLeft">120</span>
+      </div>
+      <div class="bp-sub" id="dailySub">$0 spent of $120</div>
+      <div class="bp-track"><div class="bp-fill" id="dailyFill" style="width:0%"></div></div>
+    </div>
+    <div class="budget-panel">
+      <div class="bp-label">Shop Pool</div>
+      <div class="bp-amount-row">
+        <span class="bp-sign">$</span>
+        <span class="bp-amount" id="shopLeft">1500</span>
+      </div>
+      <div class="bp-sub" id="shopSub">$0 spent of $1500</div>
+      <div class="bp-track"><div class="bp-fill" id="shopFill" style="width:0%"></div></div>
+    </div>
+  </div>
+
+  <div class="entries-scroll" id="entriesScroll">
+    <div class="empty-state" id="entriesEmpty">
+      <div class="empty-dots">
+        <div class="empty-dot" style="background:var(--orange)"></div>
+        <div class="empty-dot" style="background:var(--red)"></div>
+        <div class="empty-dot" style="background:var(--blue)"></div>
+        <div class="empty-dot" style="background:var(--purple)"></div>
+      </div>
+      <div class="empty-text">No stops today</div>
+    </div>
+  </div>
+
+  <div class="add-expense-bar visible" id="addExpenseBar" onclick="openExpenseSheet()">
+    <div class="add-expense-bar-inner">
+      <span class="add-expense-label">Insert Expense</span>
+      <span class="add-expense-arrow">→</span>
+    </div>
+  </div>
+</div>
+
+<!-- expense bottom sheet -->
+<div class="sheet-overlay" id="expenseOverlay" onclick="closeExpenseSheet(event)">
+  <div class="bottom-sheet">
+    <div class="sheet-header">
+      <span class="sheet-title">Issue Ticket</span>
+      <button class="sheet-close" onclick="closeExpenseSheet()">×</button>
+    </div>
+    <div class="sheet-body">
+      <div class="sheet-field">
+        <label class="sheet-label">What did you spend on?</label>
+        <input class="sheet-input" type="text" id="expDesc" placeholder="e.g. Katz's Deli" autocomplete="off">
+      </div>
+      <div class="sheet-field">
+        <label class="sheet-label">Amount ($)</label>
+        <input class="sheet-input" type="number" id="expAmount" placeholder="0" inputmode="decimal" step="0.01" min="0">
+      </div>
+      <div class="sheet-field">
+        <label class="sheet-label">Category</label>
+        <div class="cat-row">
+          <div class="cat-btn c1 selected" data-cat="1" onclick="selectExpCat(this)">1<span class="cat-btn-label">FOOD</span></div>
+          <div class="cat-btn c2" data-cat="2" onclick="selectExpCat(this)">2<span class="cat-btn-label">BAR</span></div>
+          <div class="cat-btn c3" data-cat="3" onclick="selectExpCat(this)">3<span class="cat-btn-label">TRANSIT</span></div>
+          <div class="cat-btn c4" data-cat="4" onclick="selectExpCat(this)">4<span class="cat-btn-label">PURCHASE</span></div>
+        </div>
+      </div>
+      <button class="sheet-submit" onclick="addExpense()">Insert Expense →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ WISHLIST ══════════════ -->
+<div class="screen" id="wishlistScreen">
+  <div class="screen-header">
+    <div class="screen-header-row">
+      <button class="back-btn" onclick="goHome()">←</button>
+      <div class="screen-dot w">W</div>
+      <div>
+        <div class="screen-title">Wishlist</div>
+        <div class="screen-subtitle" id="wishCount">0 items</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="filter-row">
+    <button class="filter-btn active" data-filter="ALL" onclick="setWishFilter(this)">All</button>
+    <button class="filter-btn" data-filter="TECH" onclick="setWishFilter(this)">Tech</button>
+    <button class="filter-btn" data-filter="BOOKS" onclick="setWishFilter(this)">Books</button>
+    <button class="filter-btn" data-filter="CLOTHES" onclick="setWishFilter(this)">Clothes</button>
+    <button class="filter-btn" data-filter="OTHER" onclick="setWishFilter(this)">Other</button>
+  </div>
+
+  <div class="search-bar">
+    <input class="search-input" type="text" id="wishSearch" placeholder="Search wishlist..." oninput="renderWishlist()">
+  </div>
+
+  <div class="wishlist-scroll" id="wishlistScroll"></div>
+
+  <div class="add-expense-bar visible" id="addWishBar" onclick="openWishSheet()">
+    <div class="add-expense-bar-inner">
+      <span class="add-expense-label">Add to Wishlist</span>
+      <span class="add-expense-arrow">→</span>
+    </div>
+  </div>
+</div>
+
+<!-- wishlist bottom sheet -->
+<div class="sheet-overlay" id="wishOverlay" onclick="closeWishSheet(event)">
+  <div class="bottom-sheet">
+    <div class="sheet-header">
+      <span class="sheet-title">Add Item</span>
+      <button class="sheet-close" onclick="closeWishSheet()">×</button>
+    </div>
+    <div class="sheet-body">
+      <div class="sheet-field">
+        <label class="sheet-label">Item name</label>
+        <input class="sheet-input" type="text" id="wishName" placeholder="e.g. Bolaño collected works" autocomplete="off">
+      </div>
+      <div class="sheet-field">
+        <label class="sheet-label">Category</label>
+        <div class="wish-cat-selector">
+          <button class="wish-cat-btn selected" data-wcat="TECH" onclick="selectWishCat(this)">Tech</button>
+          <button class="wish-cat-btn" data-wcat="BOOKS" onclick="selectWishCat(this)">Books</button>
+          <button class="wish-cat-btn" data-wcat="CLOTHES" onclick="selectWishCat(this)">Clothes</button>
+          <button class="wish-cat-btn" data-wcat="OTHER" onclick="selectWishCat(this)">Other</button>
+        </div>
+      </div>
+      <button class="sheet-submit" onclick="addWishItem()">Add Item →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ ITINERARY ══════════════ -->
+<div class="screen" id="itineraryScreen">
+  <div class="screen-header">
+    <div class="screen-header-row">
+      <button class="back-btn" onclick="goHome()">←</button>
+      <div class="screen-dot i">I</div>
+      <div>
+        <div class="screen-title">Itinerary</div>
+        <div class="screen-subtitle">Mar 14 – Mar 28</div>
+      </div>
+    </div>
+  </div>
+  <div class="itinerary-scroll" id="itineraryScroll"></div>
+</div>
+
+<!-- ══════════════ SETUP ══════════════ -->
+<div class="screen" id="setupScreen">
+  <div class="screen-header">
+    <div class="screen-header-row">
+      <div class="screen-dot b">B</div>
+      <div>
+        <div class="screen-title">Trip Setup</div>
+        <div class="screen-subtitle">First time configuration</div>
+      </div>
+    </div>
+  </div>
+  <div class="setup-scroll">
+    <div class="setup-block">
+      <div class="setup-block-title">New York (first leg)</div>
+      <div class="sheet-field">
+        <label class="sheet-label">Arrival date</label>
+        <input class="sheet-input" type="date" id="setupNY1Start">
+      </div>
+    </div>
+    <div class="setup-block">
+      <div class="setup-block-title">Chicago</div>
+      <div class="sheet-field">
+        <label class="sheet-label">Arrival date (fly from NY)</label>
+        <input class="sheet-input" type="date" id="setupCHIStart">
+      </div>
+      <div class="sheet-field" style="margin-top:12px">
+        <label class="sheet-label">Departure date (fly back to NY)</label>
+        <input class="sheet-input" type="date" id="setupCHIEnd">
+      </div>
+    </div>
+    <div class="setup-block">
+      <div class="setup-block-title">New York (return)</div>
+      <div class="sheet-field">
+        <label class="sheet-label">Last day (departure home)</label>
+        <input class="sheet-input" type="date" id="setupNY2End">
+      </div>
+    </div>
+    <div class="setup-block">
+      <div class="setup-block-title">Budgets</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div class="sheet-field">
+          <label class="sheet-label">Daily budget ($)</label>
+          <input class="sheet-input" type="number" id="setupDaily" value="120" inputmode="numeric">
+        </div>
+        <div class="sheet-field">
+          <label class="sheet-label">Shopping pool ($)</label>
+          <input class="sheet-input" type="number" id="setupPool" value="1500" inputmode="numeric">
+        </div>
+      </div>
+    </div>
+    <div class="setup-block">
+      <div id="setupError" style="color:var(--red);font-size:12px;letter-spacing:1px;margin-bottom:12px;min-height:16px;font-family:'Roboto Condensed',sans-serif;"></div>
+      <button class="sheet-submit" onclick="submitSetup()">Start Trip →</button>
+    </div>
+  </div>
+</div>
+
+
+<div class="screen" id="summaryScreen">
+  <div class="screen-header">
+    <div class="screen-header-row">
+      <button class="back-btn" onclick="goHome()">←</button>
+      <div class="screen-dot s">S</div>
+      <div>
+        <div class="screen-title">Summary</div>
+        <div class="screen-subtitle">Full trip overview</div>
+      </div>
+    </div>
+  </div>
+  <div class="summary-scroll" id="summaryScroll"></div>
+</div>
+
+<script>
+const CAT_NAMES = { '1':'Food','2':'Bar','3':'Transit','4':'Purchase' };
+const CAT_POOL  = { '1':false,'2':false,'3':false,'4':true };
+
+// ══ TRIP CONFIG — loaded from localStorage ══
+let TRIP = null; // set by setup or loaded from storage
+
+function saveTripConfig(cfg) {
+  localStorage.setItem('nyts_trip', JSON.stringify(cfg));
+}
+
+function loadTripConfig() {
+  try {
+    const s = localStorage.getItem('nyts_trip');
+    if (s) return JSON.parse(s);
+  } catch(e) {}
+  return null;
+}
+
+function dateKey(d) {
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+
+function parseLocalDate(str) {
+  // parse YYYY-MM-DD as local date
+  const [y,m,d] = str.split('-').map(Number);
+  return new Date(y, m-1, d);
+}
+
+function buildTripFromConfig(cfg) {
+  const start    = parseLocalDate(cfg.ny1Start);
+  const chiStart = parseLocalDate(cfg.chiStart);
+  const chiEnd   = parseLocalDate(cfg.chiEnd);
+  const end      = parseLocalDate(cfg.ny2End);
+
+  const totalDays = Math.round((end - start) / 86400000) + 1;
+  const cityMap = {};
+  for (let i = 0; i < totalDays; i++) {
+    const d = new Date(start);
+    d.setDate(d.getDate() + i);
+    const k = dateKey(d);
+    const isChicago = d >= chiStart && d <= chiEnd;
+    cityMap[k] = isChicago ? 'CHICAGO' : 'NEW YORK';
+  }
+  return { start, end, totalDays, cityMap, cfg };
+}
+
+function dayIndexToDate(i) {
+  const d = new Date(TRIP.start);
+  d.setDate(d.getDate() + i);
+  return d;
+}
+
+function todayTripIndex() {
+  const today = new Date();
+  today.setHours(0,0,0,0);
+  const diff = Math.round((today - TRIP.start) / 86400000);
+  if (diff < 0) return 0;
+  if (diff >= TRIP.totalDays) return TRIP.totalDays - 1;
+  return diff;
+}
+
+function getCityForDate(d) {
+  return TRIP.cityMap[dateKey(d)] || 'NEW YORK';
+}
+
+function formatDisplayDate(d) {
+  return d.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'}).toUpperCase();
+}
+
+// ══ STATE ══
+let state = {
+  currentDayIndex: 0,
+  selectedExpCat: '1',
+  selectedWishCat: 'TECH',
+  wishFilter: 'ALL',
+  entries: {},
+  wishlist: [],
+};
+
+function loadState() {
+  try {
+    const s = localStorage.getItem('nyts_v1');
+    if (s) {
+      const p = JSON.parse(s);
+      state.entries  = p.entries  || {};
+      state.wishlist = p.wishlist || [];
+    }
+  } catch(e) {}
+}
+
+function saveState() {
+  try {
+    localStorage.setItem('nyts_v1', JSON.stringify({
+      entries:  state.entries,
+      wishlist: state.wishlist,
+    }));
+  } catch(e) {}
+}
+
+// ══ SETUP SCREEN ══
+function showSetup() {
+  document.getElementById('setupScreen').classList.add('active');
+  document.getElementById('homeScreen').classList.remove('home');
+}
+
+function hideSetup() {
+  document.getElementById('setupScreen').classList.remove('active');
+  document.getElementById('homeScreen').classList.add('home');
+}
+
+function submitSetup() {
+  const ny1Start = document.getElementById('setupNY1Start').value;
+  const chiStart = document.getElementById('setupCHIStart').value;
+  const chiEnd   = document.getElementById('setupCHIEnd').value;
+  const ny2End   = document.getElementById('setupNY2End').value;
+  const daily    = parseInt(document.getElementById('setupDaily').value);
+  const pool     = parseInt(document.getElementById('setupPool').value);
+
+  // validation
+  const fields = [ny1Start, chiStart, chiEnd, ny2End];
+  if (fields.some(f => !f) || isNaN(daily) || isNaN(pool)) {
+    document.getElementById('setupError').textContent = 'Please fill in all fields.';
+    return;
+  }
+  if (ny1Start >= chiStart || chiStart >= chiEnd || chiEnd >= ny2End) {
+    document.getElementById('setupError').textContent = 'Dates must be in order: NY start < CHI start < CHI end < NY end.';
+    return;
+  }
+
+  const cfg = { ny1Start, chiStart, chiEnd, ny2End, daily, pool };
+  saveTripConfig(cfg);
+  TRIP = buildTripFromConfig(cfg);
+  TRIP.daily = daily;
+  TRIP.pool  = pool;
+  state.currentDayIndex = todayTripIndex();
+  hideSetup();
+  renderHome();
+}
+
+function resetTrip() {
+  if (!confirm('Reset all trip data? This clears your dates, expenses and wishlist.')) return;
+  localStorage.removeItem('nyts_trip');
+  localStorage.removeItem('nyts_v1');
+  localStorage.removeItem('nyts_itinerary');
+  location.reload();
+}
+
+// ══ NAVIGATION ══
+let currentScreen = 'home';
+
+function goTo(screen) {
+  document.getElementById('homeScreen').classList.add('behind');
+  document.getElementById('homeScreen').classList.remove('home');
+  const s = document.getElementById(screen + 'Screen');
+  s.classList.add('active');
+  currentScreen = screen;
+  if (screen === 'budget')    renderBudget();
+  if (screen === 'wishlist')  renderWishlist();
+  if (screen === 'itinerary') renderItinerary();
+  if (screen === 'summary')   renderSummary();
+}
+
+function goHome() {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active','behind'));
+  document.getElementById('homeScreen').classList.add('home');
+  currentScreen = 'home';
+  document.getElementById('expenseOverlay').classList.remove('open');
+  document.getElementById('wishOverlay').classList.remove('open');
+  document.getElementById('addExpenseBar').classList.add('visible');
+  document.getElementById('addWishBar').classList.add('visible');
+}
+
+// ══ HOME ══
+function renderHome() {
+  const today = new Date(); today.setHours(0,0,0,0);
+  document.getElementById('homeDate').textContent = formatDisplayDate(today);
+  document.getElementById('homeCity').textContent = getCityForDate(today);
+}
+
+// ══ BUDGET ══
+function changeDay(delta) {
+  state.currentDayIndex = Math.max(0, Math.min(TRIP.totalDays - 1, state.currentDayIndex + delta));
+  renderBudget();
+}
+
+function getEntries(di) { return state.entries[di] || []; }
+
+function getDailySpent(di) {
+  return getEntries(di).filter(e => !CAT_POOL[e.cat]).reduce((s,e) => s+e.amount, 0);
+}
+function getShopSpent() {
+  return Object.values(state.entries).flat().filter(e => CAT_POOL[e.cat]).reduce((s,e) => s+e.amount, 0);
+}
+function getTotalSpent() {
+  return Object.values(state.entries).flat().reduce((s,e) => s+e.amount, 0);
+}
+
+function renderBudget() {
+  const DAILY_BUDGET = TRIP.daily;
+  const SHOP_BUDGET  = TRIP.pool;
+  const di   = state.currentDayIndex;
+  const d    = dayIndexToDate(di);
+  const city = getCityForDate(d);
+
+  document.getElementById('budgetCityLabel').textContent = city === 'NEW YORK' ? 'New York' : 'Chicago';
+  document.getElementById('dayStripDate').textContent = formatDisplayDate(d);
+  document.getElementById('dayStripSub').textContent  = `DAY ${di+1} OF ${TRIP.totalDays} · ${city}`;
+
+  const dailySpent = getDailySpent(di);
+  const dailyLeft  = DAILY_BUDGET - dailySpent;
+  const dailyPct   = Math.min(100, (dailySpent / DAILY_BUDGET) * 100);
+  const shopSpent  = getShopSpent();
+  const shopLeft   = SHOP_BUDGET - shopSpent;
+  const shopPct    = Math.min(100, (shopSpent / SHOP_BUDGET) * 100);
+
+  const dlEl = document.getElementById('dailyLeft');
+  dlEl.textContent = Math.max(0, Math.round(dailyLeft));
+  dlEl.className = 'bp-amount' + (dailyLeft < 0 ? ' danger' : dailyLeft < 30 ? ' warn' : '');
+  document.getElementById('dailySub').textContent = `$${Math.round(dailySpent)} spent of $${DAILY_BUDGET}`;
+  const df = document.getElementById('dailyFill');
+  df.style.width = dailyPct + '%';
+  df.className = 'bp-fill' + (dailyPct > 90 ? ' danger' : dailyPct > 70 ? ' warn' : '');
+
+  const slEl = document.getElementById('shopLeft');
+  slEl.textContent = Math.max(0, Math.round(shopLeft));
+  slEl.className = 'bp-amount' + (shopLeft < 100 ? ' danger' : shopLeft < 300 ? ' warn' : '');
+  document.getElementById('shopSub').textContent = `$${Math.round(shopSpent)} spent of $${SHOP_BUDGET}`;
+  const sf = document.getElementById('shopFill');
+  sf.style.width = shopPct + '%';
+  sf.className = 'bp-fill' + (shopPct > 90 ? ' danger' : shopPct > 70 ? ' warn' : '');
+
+  const scroll = document.getElementById('entriesScroll');
+  const empty  = document.getElementById('entriesEmpty');
+  [...scroll.querySelectorAll('.ticket-stub')].forEach(el => el.remove());
+
+  const entries = getEntries(di);
+  if (entries.length === 0) { empty.style.display = 'block'; return; }
+  empty.style.display = 'none';
+
+  entries.forEach(entry => {
+    const stub = document.createElement('div');
+    stub.className = 'ticket-stub';
+    const isPool = CAT_POOL[entry.cat];
+    stub.innerHTML = `
+      <div class="stub-top">
+        <div class="stub-dot c${entry.cat}">${entry.cat}</div>
+        <div class="stub-name">${entry.desc}</div>
+        <div class="stub-amount">$${entry.amount % 1 === 0 ? entry.amount : entry.amount.toFixed(2)}</div>
+      </div>
+      <div class="stub-tear">
+        <span class="stub-meta">${formatDisplayDate(d)} · ${city}</span>
+        <span class="stub-tag">${isPool ? 'POOL' : 'DAILY'}</span>
+      </div>
+    `;
+    stub.addEventListener('click', () => deleteEntry(di, entry.id));
+    scroll.appendChild(stub);
+  });
+}
+
+function openExpenseSheet() {
+  document.getElementById('expenseOverlay').classList.add('open');
+  document.getElementById('addExpenseBar').classList.remove('visible');
+  setTimeout(() => document.getElementById('expDesc').focus(), 350);
+}
+function closeExpenseSheet(e) {
+  if (e && e.target !== document.getElementById('expenseOverlay')) return;
+  document.getElementById('expenseOverlay').classList.remove('open');
+  document.getElementById('addExpenseBar').classList.add('visible');
+}
+function selectExpCat(el) {
+  document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('selected'));
+  el.classList.add('selected');
+  state.selectedExpCat = el.dataset.cat;
+}
+function addExpense() {
+  const desc = document.getElementById('expDesc').value.trim();
+  const amt  = parseFloat(document.getElementById('expAmount').value);
+  if (!desc || isNaN(amt) || amt <= 0) {
+    document.getElementById('expDesc').style.borderColor = 'var(--red)';
+    setTimeout(() => document.getElementById('expDesc').style.borderColor = '', 800);
+    return;
+  }
+  const di = state.currentDayIndex;
+  if (!state.entries[di]) state.entries[di] = [];
+  state.entries[di].unshift({ id: Date.now(), desc, amount: amt, cat: state.selectedExpCat });
+  saveState();
+  document.getElementById('expDesc').value = '';
+  document.getElementById('expAmount').value = '';
+  document.getElementById('expenseOverlay').classList.remove('open');
+  document.getElementById('addExpenseBar').classList.add('visible');
+  renderBudget();
+}
+function deleteEntry(dayIndex, id) {
+  if (!confirm('Remove this expense?')) return;
+  state.entries[dayIndex] = (state.entries[dayIndex] || []).filter(e => e.id !== id);
+  saveState();
+  renderBudget();
+}
+
+// ══ WISHLIST ══
+function setWishFilter(el) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  state.wishFilter = el.dataset.filter;
+  renderWishlist();
+}
+function renderWishlist() {
+  const search = (document.getElementById('wishSearch')?.value || '').toLowerCase();
+  const filter = state.wishFilter;
+  const scroll = document.getElementById('wishlistScroll');
+  scroll.innerHTML = '';
+  let items = state.wishlist;
+  if (filter !== 'ALL') items = items.filter(i => i.cat === filter);
+  if (search) items = items.filter(i => i.name.toLowerCase().includes(search));
+  const total = state.wishlist.length;
+  const done  = state.wishlist.filter(i => i.done).length;
+  document.getElementById('wishCount').textContent = `${done}/${total} checked`;
+  if (items.length === 0) {
+    scroll.innerHTML = '<div class="empty-state"><div class="empty-text">Nothing here yet</div></div>';
+    return;
+  }
+  items.forEach(item => {
+    const el = document.createElement('div');
+    el.className = 'wish-item' + (item.done ? ' done' : '');
+    el.innerHTML = `
+      <div class="wish-check ${item.done?'checked':''}" onclick="toggleWish(${item.id})"></div>
+      <div class="wish-name">${item.name}</div>
+      <div class="wish-cat-tag">${item.cat}</div>
+      <button class="wish-delete" onclick="deleteWish(${item.id})">✕</button>
+    `;
+    scroll.appendChild(el);
+  });
+}
+function toggleWish(id) {
+  const item = state.wishlist.find(i => i.id === id);
+  if (item) { item.done = !item.done; saveState(); renderWishlist(); }
+}
+function deleteWish(id) {
+  state.wishlist = state.wishlist.filter(i => i.id !== id);
+  saveState(); renderWishlist();
+}
+function openWishSheet() {
+  document.getElementById('wishOverlay').classList.add('open');
+  document.getElementById('addWishBar').classList.remove('visible');
+  setTimeout(() => document.getElementById('wishName').focus(), 350);
+}
+function closeWishSheet(e) {
+  if (e && e.target !== document.getElementById('wishOverlay')) return;
+  document.getElementById('wishOverlay').classList.remove('open');
+  document.getElementById('addWishBar').classList.add('visible');
+}
+function selectWishCat(el) {
+  document.querySelectorAll('.wish-cat-btn').forEach(b => b.classList.remove('selected'));
+  el.classList.add('selected');
+  state.selectedWishCat = el.dataset.wcat;
+}
+function addWishItem() {
+  const name = document.getElementById('wishName').value.trim();
+  if (!name) {
+    document.getElementById('wishName').style.borderColor = 'var(--red)';
+    setTimeout(() => document.getElementById('wishName').style.borderColor = '', 800);
+    return;
+  }
+  state.wishlist.push({ id: Date.now(), name, cat: state.selectedWishCat, done: false });
+  saveState();
+  document.getElementById('wishName').value = '';
+  document.getElementById('wishOverlay').classList.remove('open');
+  document.getElementById('addWishBar').classList.add('visible');
+  renderWishlist();
+}
+
+// ══ ITINERARY ══
+function getItinerary() {
+  try {
+    const s = localStorage.getItem('nyts_itinerary');
+    if (s) return JSON.parse(s);
+  } catch(e) {}
+  // build empty itinerary from trip dates
+  const days = [];
+  for (let i = 0; i < TRIP.totalDays; i++) {
+    const d = new Date(TRIP.start);
+    d.setDate(d.getDate() + i);
+    days.push({ date: dateKey(d), city: getCityForDate(d), free: false, activities: [] });
+  }
+  return days;
+}
+function saveItinerary(data) {
+  localStorage.setItem('nyts_itinerary', JSON.stringify(data));
+}
+function renderItinerary() {
+  const scroll = document.getElementById('itineraryScroll');
+  scroll.innerHTML = '';
+  const today = dateKey(new Date());
+  const data  = getItinerary();
+
+  // update subtitle
+  const s = TRIP.cfg;
+  document.querySelector('#itineraryScreen .screen-subtitle').textContent =
+    `${s.ny1Start} – ${s.ny2End}`;
+
+  data.forEach((day, dayIdx) => {
+    const card = document.createElement('div');
+    card.className = 'day-card';
+    const d = new Date(day.date + 'T12:00:00');
+    const dateStr = d.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'}).toUpperCase();
+    const isToday = day.date === today;
+    const badges = [
+      day.free  ? '<span class="badge-free">Free</span>' : '',
+      isToday   ? '<span class="badge-today">Today</span>' : '',
+    ].join('');
+
+    const header = document.createElement('div');
+    header.className = 'day-card-header';
+    header.innerHTML = `
+      <div>
+        <div class="day-card-date">${dateStr}</div>
+        <div class="day-card-city">${day.city}</div>
+      </div>
+      <div class="day-card-badges">${badges}</div>
+    `;
+
+    const body = document.createElement('div');
+    body.className = 'day-card-body';
+
+    function rebuildActivities() {
+      [...body.querySelectorAll('.day-activity,.day-card-add')].forEach(el => el.remove());
+      const cur = getItinerary()[dayIdx];
+      cur.activities.forEach((a, actIdx) => {
+        const confirmed = a.includes('✓');
+        const text = a.replace(' ✓','').replace('✓','').trim();
+        const row = document.createElement('div');
+        row.className = 'day-activity';
+        row.innerHTML = `
+          ${confirmed ? '<span class="activity-confirmed">✓</span>' : ''}
+          <span class="activity-text">${text}</span>
+          <button class="activity-del" onclick="event.stopPropagation();deleteActivity(${dayIdx},${actIdx})">×</button>
+        `;
+        row.addEventListener('click', function() {
+          if (row.querySelector('.activity-edit-input')) return;
+          const textSpan = row.querySelector('.activity-text');
+          const original = textSpan.textContent;
+          const inp = document.createElement('input');
+          inp.className = 'activity-edit-input';
+          inp.value = original; inp.type = 'text';
+          textSpan.replaceWith(inp);
+          inp.focus(); inp.select();
+          function commit() {
+            const val = inp.value.trim();
+            if (val && val !== original) {
+              const d2 = getItinerary();
+              d2[dayIdx].activities[actIdx] = val + (confirmed ? ' ✓' : '');
+              saveItinerary(d2);
+            }
+            rebuildActivities();
+          }
+          inp.addEventListener('blur', commit);
+          inp.addEventListener('keydown', e => { if (e.key==='Enter') inp.blur(); });
+        });
+        body.appendChild(row);
+      });
+      const addBtn = document.createElement('button');
+      addBtn.className = 'day-card-add';
+      addBtn.textContent = '+ Add activity';
+      addBtn.onclick = () => {
+        const act = prompt('New activity:');
+        if (act && act.trim()) {
+          const d2 = getItinerary();
+          d2[dayIdx].activities.push(act.trim());
+          saveItinerary(d2);
+          rebuildActivities();
+        }
+      };
+      body.appendChild(addBtn);
+    }
+
+    rebuildActivities();
+    card.appendChild(header);
+    card.appendChild(body);
+    scroll.appendChild(card);
+    if (isToday) setTimeout(() => card.scrollIntoView({behavior:'smooth',block:'center'}), 100);
+  });
+}
+function deleteActivity(dayIdx, actIdx) {
+  if (!confirm('Remove this activity?')) return;
+  const data = getItinerary();
+  data[dayIdx].activities.splice(actIdx, 1);
+  saveItinerary(data);
+  renderItinerary();
+}
+
+// ══ SUMMARY ══
+function renderSummary() {
+  const SHOP_BUDGET  = TRIP.pool;
+  const total     = getTotalSpent();
+  const shopSpent = getShopSpent();
+  const dailyOnly = total - shopSpent;
+  const daysLogged = Object.keys(state.entries).filter(k => state.entries[k].length > 0).length;
+  const avg = daysLogged > 0 ? dailyOnly / daysLogged : 0;
+  const bycat = {'1':0,'2':0,'3':0,'4':0};
+  Object.values(state.entries).flat().forEach(e => { bycat[e.cat] = (bycat[e.cat]||0) + e.amount; });
+
+  const scroll = document.getElementById('summaryScroll');
+  scroll.innerHTML = `
+    <div class="summary-block">
+      <div class="summary-block-title">Trip Totals</div>
+      <div class="summary-stat"><span class="stat-label">Total spent</span><span class="stat-val">$${Math.round(total)}</span></div>
+      <div class="summary-stat"><span class="stat-label">Daily average</span><span class="stat-val">$${Math.round(avg)}/day</span></div>
+      <div class="summary-stat"><span class="stat-label">Shopping used</span><span class="stat-val">$${Math.round(shopSpent)} / $${SHOP_BUDGET}</span></div>
+      <div class="summary-stat"><span class="stat-label">Shopping left</span><span class="stat-val">$${Math.round(SHOP_BUDGET - shopSpent)}</span></div>
+      <div class="summary-stat"><span class="stat-label">Days logged</span><span class="stat-val">${daysLogged}</span></div>
+    </div>
+    <div class="summary-block" style="margin-top:16px">
+      <div class="summary-block-title">By Category</div>
+      ${Object.entries(bycat).filter(([,v])=>v>0).sort((a,b)=>b[1]-a[1]).map(([cat,amt])=>`
+        <div class="cat-stat-row">
+          <div class="cat-stat-dot c${cat}">${cat}</div>
+          <div class="cat-stat-name">${CAT_NAMES[cat]}</div>
+          <div class="cat-stat-amt">$${Math.round(amt)}</div>
+        </div>
+      `).join('')}
+      ${Object.values(bycat).every(v=>v===0) ? '<div class="empty-text" style="padding:20px 0;opacity:0.25;font-family:Oswald,sans-serif;letter-spacing:3px;font-size:13px;">No data yet</div>' : ''}
+    </div>
+    <div class="summary-block" style="margin-top:16px;padding-bottom:20px;">
+      <div class="summary-block-title">Settings</div>
+      <div class="summary-stat" style="cursor:pointer;" onclick="resetTrip()">
+        <span class="stat-label">Reset all trip data</span>
+        <span style="font-family:Oswald,sans-serif;font-size:18px;color:var(--red);">→</span>
+      </div>
+    </div>
+  `;
+}
+
+// ══ INIT ══
+loadState();
+const savedCfg = loadTripConfig();
+if (savedCfg) {
+  TRIP = buildTripFromConfig(savedCfg);
+  TRIP.daily = savedCfg.daily;
+  TRIP.pool  = savedCfg.pool;
+  state.currentDayIndex = todayTripIndex();
+  renderHome();
+  renderWishlist();
+} else {
+  showSetup();
+  renderWishlist();
+}
+</script>
+</body>
+</html>
