@@ -1,0 +1,2074 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#1A1A1A">
+<title>New York Travel System</title>
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<style>
+/* ═══════════════════════════════════════════
+   NYTS v16 — Ship-Ready
+   ═══════════════════════════════════════════ */
+
+/* ── SELF-HOSTED FONTS ── */
+@font-face { font-family: 'Oswald'; font-weight: 400; font-style: normal; font-display: swap; src: url('fonts/oswald-400.woff2') format('woff2'); }
+@font-face { font-family: 'Oswald'; font-weight: 500; font-style: normal; font-display: swap; src: url('fonts/oswald-500.woff2') format('woff2'); }
+@font-face { font-family: 'Oswald'; font-weight: 600; font-style: normal; font-display: swap; src: url('fonts/oswald-600.woff2') format('woff2'); }
+@font-face { font-family: 'Oswald'; font-weight: 700; font-style: normal; font-display: swap; src: url('fonts/oswald-700.woff2') format('woff2'); }
+@font-face { font-family: 'Roboto Condensed'; font-weight: 300; font-style: normal; font-display: swap; src: url('fonts/roboto-condensed-300.woff2') format('woff2'); }
+@font-face { font-family: 'Roboto Condensed'; font-weight: 400; font-style: normal; font-display: swap; src: url('fonts/roboto-condensed-400.woff2') format('woff2'); }
+@font-face { font-family: 'Roboto Condensed'; font-weight: 400; font-style: italic; font-display: swap; src: url('fonts/roboto-condensed-400-italic.woff2') format('woff2'); }
+@font-face { font-family: 'Roboto Condensed'; font-weight: 700; font-style: normal; font-display: swap; src: url('fonts/roboto-condensed-700.woff2') format('woff2'); }
+:root {
+  --cream: #F5F0E8;
+  --ink: #1A1A1A;
+  --white: #FFFFFF;
+  --yellow: #FCCC0A;
+  --red: #EE352E;
+  --green: #00933C;
+  --blue: #0039A6;
+  --orange: #FF6319;
+  --purple: #B933AD;
+  --gray: #808183;
+  --brown: #996633;
+  --radius: 0px;
+  --ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --font-display: 'Oswald', sans-serif;
+  --font-body: 'Roboto Condensed', sans-serif;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+html { height:100%; background:var(--ink); }
+body {
+  font-family: var(--font-body);
+  background: var(--cream);
+  height: 100%;
+  max-width: 430px;
+  margin: 0 auto;
+  overflow: hidden;
+  position: relative;
+}
+
+/* ── SCREENS ── */
+.screen {
+  position: absolute; inset: 0;
+  background: var(--cream);
+  display: flex; flex-direction: column;
+  transform: translateX(100%);
+  transition: transform 0.32s var(--ease);
+  overflow: hidden;
+  will-change: transform;
+}
+.screen.home { transform: translateX(0); }
+.screen.active { transform: translateX(0); }
+.screen.behind { transform: translateX(-30%); opacity: 0.6; transition: transform 0.32s var(--ease), opacity 0.32s var(--ease); }
+
+/* ── TYPOGRAPHY UTILS ── */
+.font-display { font-family: var(--font-display); }
+.eyebrow {
+  font-family: var(--font-display);
+  font-weight: 400; font-size: 10px;
+  letter-spacing: 3.5px; text-transform: uppercase;
+  color: var(--ink); opacity: 0.4;
+}
+.section-label {
+  font-family: var(--font-display);
+  font-size: 10px; font-weight: 700;
+  letter-spacing: 3px; text-transform: uppercase;
+  color: var(--ink); opacity: 0.35;
+}
+
+/* ── DOT ── */
+.dot {
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-display); font-weight: 700;
+  color: var(--white); flex-shrink: 0;
+}
+.dot.sm { width: 28px; height: 28px; font-size: 13px; }
+.dot.md { width: 36px; height: 36px; font-size: 16px; }
+.dot.lg { width: 44px; height: 44px; font-size: 20px; }
+.dot.xl { width: 100px; height: 100px; font-size: 36px; }
+.dot.food    { background: var(--orange); }
+.dot.acts    { background: var(--red); }
+.dot.transit { background: var(--blue); }
+.dot.shop    { background: var(--purple); }
+.dot.maps    { background: var(--orange); }
+.dot.notes   { background: var(--brown); }
+.dot.budget  { background: var(--red); }
+.dot.wish    { background: var(--yellow); color: var(--ink); }
+.dot.itin    { background: var(--green); }
+.dot.summ    { background: var(--blue); }
+.dot.settings { background: var(--ink); }
+
+/* ── HOME ── */
+#homeScreen { justify-content: space-between; }
+.home-header { padding: 23px 24px 0; flex-shrink: 0; }
+.home-rule { height: 1px; background: rgba(0,0,0,0.15); margin: 12px 0 16px; }
+.home-title {
+  font-family: var(--font-display); font-weight: 700;
+  font-size: 56px; line-height: 0.93;
+  color: var(--ink); letter-spacing: -1px;
+}
+.home-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 100px);
+  grid-template-rows: repeat(3, 100px);
+  gap: 14px;
+  justify-content: center; align-content: center;
+  flex: 1;
+}
+.home-grid button {
+  cursor: pointer; border: none;
+  transition: transform 0.12s var(--ease-spring);
+}
+.home-grid button:active { transform: scale(0.9); }
+
+.home-bar {
+  background: var(--ink);
+  padding: 14px 28px;
+  display: flex; justify-content: space-between; align-items: center;
+  flex-shrink: 0;
+}
+.home-bar-date {
+  font-family: var(--font-display); font-weight: 600;
+  font-size: 14px; letter-spacing: 2px;
+  color: var(--white); text-transform: uppercase;
+}
+.home-bar-city {
+  font-family: var(--font-display); font-weight: 400;
+  font-size: 12px; letter-spacing: 2px;
+  color: var(--white); opacity: 0.45; text-transform: uppercase;
+}
+
+/* ── SCREEN HEADER ── */
+.screen-hdr {
+  background: var(--cream);
+  padding: 18px 20px 14px;
+  border-bottom: 3px solid var(--ink);
+  flex-shrink: 0;
+}
+.screen-hdr-row {
+  display: flex; align-items: center; gap: 14px;
+}
+.back-btn {
+  width: 44px; height: 44px; border-radius: 50%;
+  background: var(--ink); border: none; color: var(--white);
+  font-size: 18px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; transition: opacity 0.1s;
+}
+.back-btn:active { opacity: 0.7; }
+.screen-title {
+  font-family: var(--font-display); font-weight: 700;
+  font-size: 22px; letter-spacing: 1px;
+  color: var(--ink); text-transform: uppercase;
+}
+.screen-sub {
+  font-size: 11px; letter-spacing: 1.5px;
+  color: var(--ink); opacity: 0.4;
+  text-transform: uppercase; margin-top: 1px;
+}
+
+/* ── DAY STRIP ── */
+.day-strip {
+  background: var(--ink); height: 50px;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 8px; flex-shrink: 0;
+}
+.day-strip button {
+  background: none; border: none; color: var(--white); opacity: 0.5;
+  font-size: 18px; cursor: pointer; padding: 10px 14px;
+  font-family: var(--font-display); transition: opacity 0.15s;
+}
+.day-strip button:active { opacity: 1; }
+.day-strip-center { text-align: center; flex: 1; }
+.day-strip-date {
+  font-family: var(--font-display); font-weight: 600;
+  font-size: 15px; color: var(--white);
+  letter-spacing: 2px; text-transform: uppercase;
+}
+.day-strip-sub {
+  font-size: 10px; color: var(--white); opacity: 0.4;
+  letter-spacing: 2px; text-transform: uppercase; margin-top: 1px;
+}
+
+/* ── BUDGET PANELS ── */
+.budget-panels {
+  display: grid; grid-template-columns: 1fr 1fr;
+  border-bottom: 3px solid var(--ink); flex-shrink: 0;
+}
+.budget-panel {
+  padding: 14px 16px 12px;
+  border-right: 3px solid var(--ink);
+}
+.budget-panel:last-child { border-right: none; }
+.bp-label {
+  font-size: 9px; font-weight: 700;
+  letter-spacing: 2.5px; text-transform: uppercase;
+  color: var(--ink); opacity: 0.4; margin-bottom: 5px;
+}
+.bp-amount-row { display: flex; align-items: baseline; gap: 2px; }
+.bp-sign {
+  font-family: var(--font-display); font-size: 16px;
+  color: var(--ink); opacity: 0.5;
+}
+.bp-amount {
+  font-family: var(--font-display); font-weight: 700;
+  font-size: 38px; line-height: 1; color: var(--ink);
+  letter-spacing: -1px; transition: color 0.3s;
+}
+.bp-amount.warn { color: var(--orange); }
+.bp-amount.danger { color: var(--red); }
+.bp-sub {
+  font-size: 10px; color: var(--ink); opacity: 0.4;
+  margin-top: 3px; letter-spacing: 0.3px;
+}
+.bp-track {
+  height: 5px; background: rgba(0,0,0,0.08);
+  margin-top: 8px; overflow: hidden;
+}
+.bp-fill {
+  height: 100%; background: var(--green);
+  transition: width 0.4s ease, background 0.3s;
+}
+.bp-fill.warn { background: var(--orange); }
+.bp-fill.danger { background: var(--red); }
+
+/* ── SCROLLABLE AREAS ── */
+.scroll-area {
+  flex: 1; overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 80px;
+}
+
+/* ── TICKET STUB (entries) ── */
+.stub {
+  margin: 12px 16px 0;
+  border: 2px solid var(--ink);
+  background: var(--white);
+  animation: stubIn 0.22s var(--ease);
+  cursor: pointer;
+  transition: transform 0.15s, opacity 0.15s;
+}
+.stub.delete-armed { transform: scale(0.97); opacity: 0.6; }
+@keyframes stubIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.stub-top {
+  background: var(--ink); padding: 10px 14px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.stub-name {
+  font-family: var(--font-display); font-weight: 500;
+  font-size: 15px; color: var(--white);
+  letter-spacing: 0.5px; flex: 1; padding: 0 12px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.stub-amount {
+  font-family: var(--font-display); font-weight: 700;
+  font-size: 20px; color: var(--yellow);
+  letter-spacing: 0.5px; flex-shrink: 0;
+}
+.stub-tear {
+  border-top: 2px dashed rgba(0,0,0,0.15);
+  margin: 0 14px; padding: 7px 0;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.stub-meta {
+  font-size: 10px; color: var(--ink); opacity: 0.4;
+  letter-spacing: 1.5px; text-transform: uppercase;
+}
+.stub-tag {
+  font-size: 9px; font-weight: 700;
+  letter-spacing: 2px; text-transform: uppercase;
+  padding: 2px 6px; border: 1.5px solid rgba(0,0,0,0.15);
+  color: var(--ink); opacity: 0.5;
+}
+
+/* ── EMPTY STATE ── */
+.empty-state {
+  padding: 48px 20px; text-align: center;
+}
+.empty-dots {
+  display: flex; justify-content: center; gap: 10px; margin-bottom: 16px;
+}
+.empty-dot {
+  width: 14px; height: 14px; border-radius: 50%; opacity: 0.15;
+}
+.empty-text {
+  font-family: var(--font-display); font-size: 13px;
+  letter-spacing: 3px; text-transform: uppercase;
+  color: var(--ink); opacity: 0.25;
+}
+
+/* ── BOTTOM ACTION BAR ── */
+.action-bar {
+  position: fixed; bottom: 0;
+  left: 50%; transform: translateX(-50%);
+  width: 100%; max-width: 430px;
+  background: var(--yellow); border-top: 3px solid var(--ink);
+  padding: 14px 20px;
+  padding-bottom: max(14px, env(safe-area-inset-bottom));
+  cursor: pointer; z-index: 50;
+  display: none;
+  transition: transform 0.2s var(--ease);
+}
+.action-bar.visible { display: block; }
+.action-bar:active { transform: translateX(-50%) scale(0.98); }
+.action-bar-inner {
+  display: flex; align-items: center; justify-content: space-between;
+}
+.action-bar-label {
+  font-family: var(--font-display); font-weight: 700;
+  font-size: 16px; letter-spacing: 2px;
+  color: var(--ink); text-transform: uppercase;
+}
+.action-bar-arrow { font-size: 20px; color: var(--ink); }
+
+/* ── FILTER ROW ── */
+.filter-row {
+  display: flex; gap: 0;
+  border-bottom: 3px solid var(--ink);
+  overflow-x: auto; flex-shrink: 0;
+  scrollbar-width: none;
+}
+.filter-row::-webkit-scrollbar { display: none; }
+.filter-btn {
+  font-family: var(--font-display); font-weight: 600;
+  font-size: 12px; letter-spacing: 2px; text-transform: uppercase;
+  padding: 12px 16px; border: none;
+  border-right: 2px solid var(--ink);
+  background: var(--cream); color: var(--ink);
+  cursor: pointer; white-space: nowrap;
+  opacity: 0.5; transition: all 0.12s; flex-shrink: 0;
+}
+.filter-btn.active {
+  background: var(--ink); color: var(--white); opacity: 1;
+}
+
+/* ── SEARCH BAR ── */
+.search-bar {
+  padding: 10px 16px;
+  border-bottom: 2px solid rgba(0,0,0,0.08);
+  flex-shrink: 0;
+}
+.search-input {
+  width: 100%;
+  border: 2px solid rgba(0,0,0,0.12);
+  background: var(--white);
+  padding: 9px 12px;
+  font-family: var(--font-body); font-size: 15px;
+  color: var(--ink); outline: none;
+  border-radius: 0; -webkit-appearance: none;
+  transition: border-color 0.15s;
+}
+.search-input:focus { border-color: var(--ink); }
+
+/* ── WISHLIST ── */
+.wish-item {
+  display: flex; align-items: center;
+  padding: 14px 16px; border-bottom: 1px solid rgba(0,0,0,0.06);
+  gap: 14px; background: var(--cream); transition: opacity 0.2s;
+}
+.wish-item.done { opacity: 0.35; }
+.wish-check {
+  width: 32px; height: 32px;
+  border: 2.5px solid var(--ink);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; flex-shrink: 0;
+  transition: background 0.12s var(--ease-spring);
+}
+.wish-check.checked { background: var(--ink); }
+.wish-check.checked::after {
+  content: '✓'; color: var(--white);
+  font-size: 14px; font-weight: 700;
+}
+.wish-name {
+  flex: 1; font-family: var(--font-display); font-weight: 500;
+  font-size: 16px; color: var(--ink); letter-spacing: 0.3px;
+}
+.wish-item.done .wish-name { text-decoration: line-through; }
+.wish-price {
+  font-family: var(--font-display); font-weight: 600;
+  font-size: 14px; color: var(--ink); opacity: 0.5;
+  flex-shrink: 0;
+}
+.wish-cat-tag {
+  font-size: 9px; font-weight: 700;
+  letter-spacing: 2px; text-transform: uppercase;
+  padding: 3px 7px; border: 1.5px solid var(--ink);
+  color: var(--ink); opacity: 0.4; flex-shrink: 0;
+}
+.wish-del {
+  background: none; border: none;
+  font-size: 12px; color: var(--ink); opacity: 0.15;
+  cursor: pointer; padding: 4px;
+  font-family: var(--font-body); letter-spacing: 1px;
+  text-transform: uppercase;
+}
+.wish-del:active { opacity: 0.8; color: var(--red); }
+.wish-del.delete-armed { opacity: 0.8; color: var(--red); }
+
+/* ── ITINERARY ── */
+.day-card {
+  margin-bottom: 12px; border: 2px solid var(--ink); overflow: hidden;
+}
+.day-card-hdr {
+  background: var(--ink); padding: 10px 14px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.day-card-date {
+  font-family: var(--font-display); font-weight: 700;
+  font-size: 14px; letter-spacing: 2px;
+  color: var(--white); text-transform: uppercase;
+}
+.day-card-city {
+  font-size: 10px; color: var(--white); opacity: 0.45;
+  letter-spacing: 2px; text-transform: uppercase;
+}
+.day-card-badges { display: flex; gap: 6px; align-items: center; }
+.badge {
+  font-family: var(--font-display); font-weight: 700;
+  font-size: 9px; letter-spacing: 2px; padding: 2px 7px;
+  text-transform: uppercase;
+}
+.badge.free { background: var(--red); color: var(--white); }
+.badge.today { background: var(--yellow); color: var(--ink); }
+
+.day-card-body { background: var(--white); padding: 12px 14px; }
+.day-activity {
+  font-size: 14px; color: var(--ink); padding: 6px 0;
+  letter-spacing: 0.3px;
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+  display: flex; align-items: center; gap: 8px;
+  cursor: pointer; transition: background 0.1s;
+  margin: 0 -14px; padding-left: 14px; padding-right: 14px;
+}
+.day-activity:last-child { border-bottom: none; }
+.day-activity:active { background: rgba(0,0,0,0.04); }
+.activity-text { flex: 1; }
+.activity-confirmed { color: var(--green); font-size: 12px; flex-shrink: 0; }
+.activity-del {
+  background: none; border: none; color: var(--red);
+  opacity: 0; font-size: 16px; cursor: pointer;
+  padding: 4px 6px; transition: opacity 0.15s; flex-shrink: 0;
+}
+.day-activity:hover .activity-del { opacity: 0.6; }
+.activity-del.delete-armed { opacity: 0.8 !important; }
+.activity-edit-input {
+  flex: 1; border: none; border-bottom: 2px solid var(--blue);
+  background: transparent; font-family: var(--font-body);
+  font-size: 14px; color: var(--ink); outline: none; padding: 2px 0;
+}
+.day-card-add {
+  background: none; border: none; width: 100%;
+  padding: 8px 14px; text-align: left;
+  font-family: var(--font-display); font-size: 12px;
+  letter-spacing: 2px; color: var(--ink); opacity: 0.3;
+  cursor: pointer; text-transform: uppercase;
+  border-top: 1px dashed rgba(0,0,0,0.1);
+  transition: opacity 0.1s;
+}
+.day-card-add:active { opacity: 0.7; }
+
+/* ── SUMMARY ── */
+.summary-block { padding: 20px 20px 0; }
+.summary-block-title {
+  font-family: var(--font-display); font-size: 10px; font-weight: 700;
+  letter-spacing: 3px; text-transform: uppercase;
+  color: var(--ink); opacity: 0.35;
+  padding-bottom: 10px; border-bottom: 2px solid rgba(0,0,0,0.1);
+  margin-bottom: 4px;
+}
+.summary-stat {
+  display: flex; justify-content: space-between; align-items: baseline;
+  padding: 11px 0; border-bottom: 1px solid rgba(0,0,0,0.06);
+}
+.stat-label { font-size: 15px; color: var(--ink); opacity: 0.55; letter-spacing: 0.3px; }
+.stat-val {
+  font-family: var(--font-display); font-weight: 700;
+  font-size: 24px; color: var(--ink);
+}
+.cat-stat-row {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 0; border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+.cat-stat-name { flex: 1; font-size: 15px; color: var(--ink); opacity: 0.6; }
+.cat-stat-amt {
+  font-family: var(--font-display); font-weight: 700;
+  font-size: 20px; color: var(--ink);
+}
+
+/* ── MAPS ── */
+.place-row {
+  display: flex; align-items: center; gap: 12px;
+  padding: 14px 20px; border-bottom: 1px solid rgba(0,0,0,0.06);
+  cursor: pointer; text-decoration: none;
+  transition: background 0.1s;
+}
+.place-row:active { background: rgba(0,0,0,0.04); }
+.place-cat-dot {
+  width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-display); font-weight: 700; font-size: 11px;
+  color: #fff; letter-spacing: 0.5px;
+}
+.place-cat-dot.Food   { background: var(--orange); }
+.place-cat-dot.Bar    { background: var(--red); }
+.place-cat-dot.Shop   { background: var(--purple); }
+.place-cat-dot.Sight  { background: var(--blue); }
+.place-cat-dot.Museum { background: #F57C00; }
+.place-cat-dot.Park   { background: var(--green); }
+.place-cat-dot.Hotel  { background: var(--yellow); color: var(--ink); }
+.place-cat-dot.Transit{ background: var(--gray); }
+.place-cat-dot.Other  { background: #BDBDBD; }
+.place-info { flex: 1; min-width: 0; }
+.place-name {
+  font-family: var(--font-display); font-weight: 600; font-size: 15px;
+  color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.place-desc {
+  font-family: var(--font-body); font-size: 12px;
+  color: var(--ink); opacity: 0.45; margin-top: 2px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.place-dist {
+  font-family: var(--font-display); font-size: 13px; font-weight: 600;
+  color: var(--ink); opacity: 0.4; flex-shrink: 0;
+}
+
+/* ── NOTES ── */
+.note-card {
+  margin: 12px 16px 0; border: 1.5px solid rgba(0,0,0,0.1);
+  padding: 14px 16px; position: relative; cursor: pointer;
+  transition: background 0.1s;
+}
+.note-card:active { background: rgba(0,0,0,0.03); }
+.note-card-title {
+  font-family: var(--font-display); font-weight: 700; font-size: 16px;
+  color: var(--ink); margin-bottom: 6px; padding-right: 28px;
+}
+.note-card-body {
+  font-family: var(--font-body); font-size: 14px;
+  color: var(--ink); opacity: 0.65; line-height: 1.5;
+  white-space: pre-wrap; word-break: break-word;
+}
+.note-card-meta {
+  font-family: var(--font-display); font-size: 10px; letter-spacing: 2px;
+  color: var(--ink); opacity: 0.3; margin-top: 10px; text-transform: uppercase;
+}
+.note-del {
+  position: absolute; top: 10px; right: 10px;
+  background: none; border: none; font-size: 18px; cursor: pointer;
+  color: var(--ink); opacity: 0.25; padding: 4px;
+}
+.note-del:active { opacity: 0.7; }
+.note-del.delete-armed { opacity: 0.7; color: var(--red); }
+
+/* ── TICKET SCREEN (shared across expense, wish, activity, notes) ── */
+.tkt-screen {
+  background: #d4d4d4 !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+.ticket {
+  width: 300px; background: white;
+  border-radius: 16px; overflow: hidden;
+}
+.tkt-top { padding: 24px; background: white; }
+.tkt-back {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: rgba(0,0,0,0.06); border: none;
+  color: var(--ink); font-size: 16px;
+  cursor: pointer; display: flex;
+  align-items: center; justify-content: center;
+  margin-bottom: 16px; transition: background 0.1s;
+}
+.tkt-back:active { background: rgba(0,0,0,0.12); }
+.tkt-heading {
+  font-family: var(--font-display); font-weight: 700;
+  font-size: 40px; color: var(--ink);
+  letter-spacing: -0.5px; line-height: 1;
+}
+.tkt-input {
+  font-size: 22px; font-weight: bold; color: var(--ink);
+  border: none; outline: none; background: transparent;
+  width: 100%;
+}
+.tkt-input::placeholder { color: #ddd; }
+.tkt-perforation {
+  position: relative; height: 0;
+}
+.tkt-perforation::before,
+.tkt-perforation::after {
+  content: ''; position: absolute;
+  width: 50px; height: 50px; background: #d4d4d4;
+  border-radius: 50%; top: -25px; z-index: 10;
+}
+.tkt-perforation::before { left: -25px; }
+.tkt-perforation::after { right: -25px; }
+.tkt-perforation-line {
+  border-top: 2px dashed #ccc; position: relative; z-index: 1;
+}
+.tkt-stub {
+  padding: 16px 24px; height: 110px; background: white;
+  display: flex; flex-direction: column; justify-content: flex-end;
+  padding-bottom: 25px;
+}
+.tkt-stub-line {
+  font-size: 11px; font-weight: 700; color: var(--ink);
+  line-height: 1.55; font-family: 'Courier New', monospace;
+  text-transform: uppercase; letter-spacing: 1px;
+}
+.tkt-mag { background: var(--ink); height: 50px; }
+.tkt-action {
+  width: 100%; height: 50px; background: white;
+  border: none; border-radius: 0 0 16px 16px;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 20px; cursor: pointer;
+  transition: background 0.1s;
+}
+.tkt-action:active { background: #f5f5f5; }
+.tkt-action-chevrons {
+  font-family: monospace; font-size: 15px; font-weight: 900;
+  color: var(--ink); letter-spacing: -1px;
+}
+.tkt-action-label {
+  font-family: var(--font-display); font-size: 22px; font-weight: 700;
+  color: var(--ink); letter-spacing: 3px;
+}
+.tkt-logo {
+  position: absolute; top: -8px; right: -8px; z-index: 5;
+  width: 44px; height: 44px; border-radius: 50%;
+  background: var(--ink); display: flex; align-items: center; justify-content: center;
+}
+.tkt-logo-text {
+  font-family: var(--font-display); font-weight: 700; font-style: italic;
+  font-size: 12px; color: var(--white); letter-spacing: -0.5px;
+  transform: rotate(-10deg);
+}
+
+/* ── CATEGORY SELECTOR ── */
+.cat-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 4px; }
+.cat-dot-btn {
+  width: 48px; height: 48px; border-radius: 50%;
+  border: 3px solid transparent; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: transform 0.1s var(--ease-spring), outline-offset 0.1s;
+  padding: 0; background: none;
+}
+.cat-dot-btn:active { transform: scale(0.88); }
+.cat-dot-btn.selected { outline: 3px solid var(--ink); outline-offset: 3px; transform: scale(1.05); }
+.cat-dot-btn svg { width: 60%; height: 60%; }
+
+
+/* ── SETTINGS ── */
+.settings-section-title {
+  font-family: var(--font-display); font-weight: 700;
+  font-size: 10px; letter-spacing: 3px; text-transform: uppercase;
+  color: var(--ink); opacity: 0.35;
+  padding: 20px 20px 8px;
+}
+.settings-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 20px; border-bottom: 1px solid rgba(0,0,0,0.06);
+  cursor: pointer; transition: background 0.1s;
+}
+.settings-row:active { background: rgba(0,0,0,0.04); }
+.settings-row.danger .settings-row-label { color: var(--red); }
+.settings-row-label {
+  font-family: var(--font-display); font-weight: 600;
+  font-size: 15px; color: var(--ink); letter-spacing: 0.5px;
+}
+.settings-row-sub {
+  font-size: 12px; color: var(--ink); opacity: 0.4; margin-top: 2px;
+}
+.settings-row-arrow {
+  font-size: 18px; color: var(--ink); opacity: 0.3;
+}
+
+/* ── SETUP ── */
+.setup-scroll { flex: 1; overflow-y: auto; padding: 0 0 40px; }
+.setup-block {
+  padding: 20px 20px 0; border-bottom: 1px solid rgba(0,0,0,0.08);
+  padding-bottom: 20px;
+}
+.setup-block-title {
+  font-family: var(--font-display); font-weight: 700;
+  font-size: 11px; letter-spacing: 3px; text-transform: uppercase;
+  color: var(--ink); opacity: 0.35; margin-bottom: 14px;
+}
+.sheet-field { margin-bottom: 16px; }
+.sheet-label {
+  font-size: 9px; font-weight: 700;
+  letter-spacing: 2.5px; text-transform: uppercase;
+  color: var(--ink); opacity: 0.4;
+  margin-bottom: 6px; display: block;
+}
+.sheet-input {
+  width: 100%; border: 2px solid var(--ink);
+  background: var(--white); padding: 13px 14px;
+  font-family: var(--font-body); font-size: 16px;
+  color: var(--ink); outline: none;
+  border-radius: 0; -webkit-appearance: none;
+  transition: border-color 0.15s;
+}
+.sheet-input:focus { border-color: var(--blue); }
+.sheet-submit {
+  width: 100%; height: 52px;
+  background: var(--ink); border: none;
+  color: var(--yellow); font-family: var(--font-display);
+  font-weight: 700; font-size: 16px;
+  letter-spacing: 3px; text-transform: uppercase;
+  cursor: pointer; margin-top: 20px;
+  transition: opacity 0.1s;
+}
+.sheet-submit:active { opacity: 0.8; }
+</style>
+</head>
+<body>
+<div id="saveErrorToast" style="position:fixed;top:20px;left:50%;transform:translateX(-50%);background:var(--red);color:#fff;padding:10px 20px;font-family:var(--font-display);font-size:13px;letter-spacing:1px;text-transform:uppercase;z-index:9999;opacity:0;transition:opacity 0.3s;pointer-events:none;"></div>
+<style>#saveErrorToast.visible{opacity:1;}</style>
+
+<!-- ══════════════ HOME ══════════════ -->
+<div class="screen home" id="homeScreen">
+  <div class="home-header">
+    <div class="eyebrow" onclick="openSettings()" style="cursor:pointer;">Personal Transit Authority ⚙</div>
+    <div class="home-rule"></div>
+    <div class="home-title">New York<br>Travel System</div>
+  </div>
+  <div class="home-grid">
+    <button class="dot xl budget" onclick="goTo('budget')" aria-label="Budget">B</button>
+    <button class="dot xl wish" onclick="goTo('wishlist')" aria-label="Wishlist">W</button>
+    <button class="dot xl itin" onclick="goTo('itinerary')" aria-label="Itinerary">I</button>
+    <button class="dot xl summ" onclick="goTo('summary')" aria-label="Summary">S</button>
+    <button class="dot xl maps" onclick="goTo('maps')" aria-label="Maps">M</button>
+    <button class="dot xl notes" onclick="goTo('notes')" aria-label="Notes">N</button>
+  </div>
+  <div class="home-bar">
+    <div class="home-bar-date" id="homeDate">—</div>
+    <div class="home-bar-city" id="homeCity">—</div>
+  </div>
+</div>
+
+<!-- ══════════════ BUDGET ══════════════ -->
+<div class="screen" id="budgetScreen">
+  <div class="screen-hdr">
+    <div class="screen-hdr-row">
+      <button class="back-btn" onclick="goHome()">←</button>
+      <div class="dot lg budget">B</div>
+      <div>
+        <div class="screen-title">Budget</div>
+        <div class="screen-sub" id="budgetCityLabel">New York</div>
+      </div>
+    </div>
+  </div>
+  <div class="day-strip">
+    <button onclick="changeDay(-1)">◀</button>
+    <div class="day-strip-center">
+      <div class="day-strip-date" id="dayStripDate">—</div>
+      <div class="day-strip-sub" id="dayStripSub">DAY 1 OF 15</div>
+    </div>
+    <button onclick="changeDay(1)">▶</button>
+  </div>
+  <div class="budget-panels">
+    <div class="budget-panel">
+      <div class="bp-label">Daily Left</div>
+      <div class="bp-amount-row">
+        <span class="bp-sign">$</span>
+        <span class="bp-amount" id="dailyLeft">120</span>
+      </div>
+      <div class="bp-sub" id="dailySub">$0 spent of $120</div>
+      <div class="bp-track"><div class="bp-fill" id="dailyFill" style="width:0%"></div></div>
+    </div>
+    <div class="budget-panel">
+      <div class="bp-label">Shop Pool</div>
+      <div class="bp-amount-row">
+        <span class="bp-sign">$</span>
+        <span class="bp-amount" id="shopLeft">1500</span>
+      </div>
+      <div class="bp-sub" id="shopSub">$0 spent of $1500</div>
+      <div class="bp-track"><div class="bp-fill" id="shopFill" style="width:0%"></div></div>
+    </div>
+  </div>
+  <div class="scroll-area" id="entriesScroll">
+    <div class="empty-state" id="entriesEmpty">
+      <div class="empty-dots">
+        <div class="empty-dot" style="background:var(--orange)"></div>
+        <div class="empty-dot" style="background:var(--red)"></div>
+        <div class="empty-dot" style="background:var(--blue)"></div>
+        <div class="empty-dot" style="background:var(--purple)"></div>
+      </div>
+      <div class="empty-text">No stops today</div>
+    </div>
+  </div>
+  <div class="action-bar visible" id="addExpenseBar" onclick="openExpenseSheet()">
+    <div class="action-bar-inner">
+      <span class="action-bar-label">Insert Expense</span>
+      <span class="action-bar-arrow">→</span>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ WISHLIST ══════════════ -->
+<div class="screen" id="wishlistScreen">
+  <div class="screen-hdr">
+    <div class="screen-hdr-row">
+      <button class="back-btn" onclick="goHome()">←</button>
+      <div class="dot lg wish">W</div>
+      <div>
+        <div class="screen-title">Wishlist</div>
+        <div class="screen-sub" id="wishCount">0 items</div>
+      </div>
+    </div>
+  </div>
+  <div class="filter-row">
+    <button class="filter-btn active" data-filter="ALL" onclick="setWishFilter(this)">All</button>
+    <button class="filter-btn" data-filter="TECH" onclick="setWishFilter(this)">Tech</button>
+    <button class="filter-btn" data-filter="BOOKS" onclick="setWishFilter(this)">Books</button>
+    <button class="filter-btn" data-filter="CLOTHES" onclick="setWishFilter(this)">Clothes</button>
+    <button class="filter-btn" data-filter="OTHER" onclick="setWishFilter(this)">Other</button>
+  </div>
+  <div class="search-bar">
+    <input class="search-input" type="text" id="wishSearch" placeholder="Search wishlist..." oninput="debouncedWishSearch()">
+  </div>
+  <div class="scroll-area" id="wishlistScroll"></div>
+  <div class="action-bar visible" id="addWishBar" onclick="openWishTicket()">
+    <div class="action-bar-inner">
+      <span class="action-bar-label">Add to Wishlist</span>
+      <span class="action-bar-arrow">→</span>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ ITINERARY ══════════════ -->
+<div class="screen" id="itineraryScreen">
+  <div class="screen-hdr">
+    <div class="screen-hdr-row">
+      <button class="back-btn" onclick="goHome()">←</button>
+      <div class="dot lg itin">I</div>
+      <div>
+        <div class="screen-title">Itinerary</div>
+        <div class="screen-sub" id="itinerarySub">Mar 14 – Mar 28</div>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-area" style="padding:16px 16px 40px" id="itineraryScroll"></div>
+</div>
+
+<!-- ══════════════ SUMMARY ══════════════ -->
+<div class="screen" id="summaryScreen">
+  <div class="screen-hdr">
+    <div class="screen-hdr-row">
+      <button class="back-btn" onclick="goHome()">←</button>
+      <div class="dot lg summ">S</div>
+      <div>
+        <div class="screen-title">Summary</div>
+        <div class="screen-sub">Full trip overview</div>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-area" style="padding-bottom:40px" id="summaryScroll"></div>
+</div>
+
+<!-- ══════════════ MAPS ══════════════ -->
+<div class="screen" id="mapsScreen">
+  <div class="screen-hdr">
+    <div class="screen-hdr-row">
+      <button class="back-btn" onclick="goHome()">←</button>
+      <div class="dot lg maps">M</div>
+      <div>
+        <div class="screen-title">Maps</div>
+        <div class="screen-sub" id="mapsSubtitle">Nearby saved places</div>
+      </div>
+    </div>
+  </div>
+  <div class="filter-row" id="mapsFilterRow">
+    <button class="filter-btn active" data-filter="ALL" onclick="setMapsFilter(this)">All</button>
+    <button class="filter-btn" data-filter="Food" onclick="setMapsFilter(this)">Food</button>
+    <button class="filter-btn" data-filter="Bar" onclick="setMapsFilter(this)">Bar</button>
+    <button class="filter-btn" data-filter="Shop" onclick="setMapsFilter(this)">Shop</button>
+    <button class="filter-btn" data-filter="Sight" onclick="setMapsFilter(this)">Sight</button>
+    <button class="filter-btn" data-filter="Museum" onclick="setMapsFilter(this)">Museum</button>
+    <button class="filter-btn" data-filter="Park" onclick="setMapsFilter(this)">Park</button>
+    <button class="filter-btn" data-filter="Hotel" onclick="setMapsFilter(this)">Hotel</button>
+    <button class="filter-btn" data-filter="Other" onclick="setMapsFilter(this)">Other</button>
+  </div>
+  <div class="search-bar">
+    <input class="search-input" type="text" id="mapsSearch" placeholder="Search places..." oninput="debouncedMapsSearch()">
+  </div>
+  <div class="scroll-area" id="mapsScroll"></div>
+  <div class="action-bar visible" id="importPlacesBar" onclick="document.getElementById('kmlInput').click()">
+    <div class="action-bar-inner">
+      <span class="action-bar-label" id="importLabel">Import KMZ / KML file →</span>
+      <span class="action-bar-arrow">→</span>
+    </div>
+  </div>
+  <input type="file" id="kmlInput" accept=".kml,.kmz" style="display:none" onchange="importKML(event)">
+</div>
+
+<!-- ══════════════ NOTES ══════════════ -->
+<div class="screen" id="notesScreen">
+  <div class="screen-hdr">
+    <div class="screen-hdr-row">
+      <button class="back-btn" onclick="goHome()">←</button>
+      <div class="dot lg notes">N</div>
+      <div>
+        <div class="screen-title">Notes</div>
+        <div class="screen-sub">Trip scratch pad</div>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-area" id="notesScroll"></div>
+  <div class="action-bar visible" id="addNoteBar" onclick="openNoteTicket(null)">
+    <div class="action-bar-inner">
+      <span class="action-bar-label">New Note</span>
+      <span class="action-bar-arrow">→</span>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ SETUP ══════════════ -->
+<div class="screen" id="setupScreen">
+  <div class="screen-hdr">
+    <div class="screen-hdr-row">
+      <div class="dot lg budget">B</div>
+      <div>
+        <div class="screen-title">Trip Setup</div>
+        <div class="screen-sub">First time configuration</div>
+      </div>
+    </div>
+  </div>
+  <div class="setup-scroll">
+    <div class="setup-block">
+      <div class="setup-block-title">Dates</div>
+      <div class="sheet-field">
+        <label class="sheet-label">Arrival date</label>
+        <input class="sheet-input" type="date" id="setupStart">
+      </div>
+      <div class="sheet-field" style="margin-top:12px">
+        <label class="sheet-label">Departure date</label>
+        <input class="sheet-input" type="date" id="setupEnd">
+      </div>
+    </div>
+    <div class="setup-block">
+      <div class="setup-block-title">Budgets</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div class="sheet-field">
+          <label class="sheet-label">Daily budget ($)</label>
+          <input class="sheet-input" type="number" id="setupDaily" value="120" inputmode="numeric">
+        </div>
+        <div class="sheet-field">
+          <label class="sheet-label">Shopping pool ($)</label>
+          <input class="sheet-input" type="number" id="setupPool" value="1500" inputmode="numeric">
+        </div>
+      </div>
+    </div>
+    <div class="setup-block">
+      <div id="setupError" style="color:var(--red);font-size:12px;letter-spacing:1px;margin-bottom:12px;min-height:16px;font-family:var(--font-body)"></div>
+      <button class="sheet-submit" onclick="submitSetup()">Start Trip →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ SETTINGS ══════════════ -->
+<div class="screen" id="settingsScreen">
+  <div class="screen-hdr">
+    <div class="screen-hdr-row">
+      <button class="back-btn" onclick="closeSettings()">←</button>
+      <div class="dot lg settings">⚙</div>
+      <div>
+        <div class="screen-title">Settings</div>
+        <div class="screen-sub">Data & config</div>
+      </div>
+    </div>
+  </div>
+  <div style="flex:1;overflow-y:auto;padding-bottom:40px;">
+    <div class="settings-section-title">Data</div>
+    <div class="settings-row" onclick="exportData()">
+      <div>
+        <div class="settings-row-label">Export backup</div>
+        <div class="settings-row-sub">Download JSON file</div>
+      </div>
+      <span class="settings-row-arrow">↓</span>
+    </div>
+    <div class="settings-row" onclick="document.getElementById('importInput').click()">
+      <div>
+        <div class="settings-row-label">Import backup</div>
+        <div class="settings-row-sub">Restore from JSON</div>
+      </div>
+      <span class="settings-row-arrow">↑</span>
+    </div>
+    <input type="file" id="importInput" accept=".json" style="display:none;" onchange="importData(event)">
+    <div id="settingsError" style="display:none;color:var(--red);font-size:12px;letter-spacing:1px;padding:8px 24px;font-family:var(--font-body);"></div>
+    <div class="settings-section-title">Trip</div>
+    <div class="settings-row" onclick="goTo('setup')">
+      <div>
+        <div class="settings-row-label">Trip setup</div>
+        <div class="settings-row-sub">Dates & budget</div>
+      </div>
+      <span class="settings-row-arrow">→</span>
+    </div>
+    <div class="settings-row danger" onclick="resetTrip()">
+      <div>
+        <div id="resetTripBtn" class="settings-row-label">Reset all data</div>
+        <div class="settings-row-sub">Wipe everything — cannot undo</div>
+      </div>
+      <span class="settings-row-arrow">→</span>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ EXPENSE TICKET ══════════════ -->
+<div class="screen tkt-screen" id="ticketScreen">
+  <div class="ticket" style="position:relative;">
+    <div class="tkt-logo"><span class="tkt-logo-text">NYTS</span></div>
+    <div class="tkt-top">
+      <button class="tkt-back" onclick="closeExpenseSheet()">←</button>
+      <div class="cat-row" id="expCatRow">
+        <button class="cat-dot-btn selected" data-cat="1" onclick="selectExpCat(this)">
+          <div class="dot" style="width:100%;height:100%;background:var(--orange);">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1479.54 1267.21"><path fill="#fff" fill-rule="evenodd" d="M1178.49,1287.88c6-19.25,12.17-39.07,18.78-60.29-51,8.57-51.08,8.49-182.77,87.69-8.92,5.36-15.9,14-24.53,21.74,38.82,23.46,38.82,23.46,89.63,26C1093.19,1315.46,1145.65,1315.91,1178.49,1287.88Z" transform="translate(-246.01 -683.07)"/><path fill="#fff" fill-rule="evenodd" d="M1042.14,1392.53c-12.94-4.53-26.73-9.27-40.5-14.1-15.45-5.48-30.86-11.06-45-16.13-52.43,31.94-93.79,90.41-101.66,141.34C884.7,1495.42,1043.57,1415.17,1042.14,1392.53Z" transform="translate(-246.01 -683.07)"/><path fill="#fff" fill-rule="evenodd" d="M1083.23,1442.71c1-1.84-1.51-5.6-3.09-10.69-13.77,5.78-27.08,12.84-41.23,17-6.18,1.81-12.46,3.3-18.78,4.64l-69.78,35.22h0c-5.75,4-11.58,7.79-17.58,11.33-31.08,18.35-62.79,35.63-96.66,54.71l32.77,62.68H987.64C1020.22,1558.2,1051.91,1500.55,1083.23,1442.71Z" transform="translate(-246.01 -683.07)"/><path fill="#fff" fill-rule="evenodd" d="M1111.3,1455.11c-32.44,45.7-55.82,96.26-83.84,149.8,78.81-5.78,131.55-48.39,183.27-93.87-8.35-35.81-15.29-69.39-33.48-98.59C1147.47,1417.52,1127.05,1432.9,1111.3,1455.11Z" transform="translate(-246.01 -683.07)"/><path fill="#fff" fill-rule="evenodd" d="M963.05,761.7s-13.54-22.43-35.2-12.31-27.08,29.7,0,28.91S963.05,761.7,963.05,761.7Z" transform="translate(-246.01 -683.07)"/><path fill="#fff" fill-rule="evenodd" d="M994.92,1730.05c75.93-11,148.23-33.38,213.78-75,40.35-25.67,81.11-50.76,122.55-74.63,68.07-39.16,128.53-87.8,181.84-145.1,37.1-39.88,72.87-81.07,108-122.77,22.49-26.69,39.68-57.43,43-92.66,4.4-46.43-2.73-92.5-12.59-137.89-2.35-10.84-9.2-21.18-15.77-30.49-21-29.73-52.44-40.17-86.56-40.78-41.28-.76-83-.51-122.89,12.48-50.27,16.36-100.09,34.09-150,51.55-14,4.93-27.37,12.13-41.62,16.2-74,21.11-140.94,57.51-202.7,101.64-68.29,48.82-130.4,106-188.41,166.75-36.45,38.18-68.41,80.8-101.24,122.38-21.36,27-43.93,53.88-44.48,91.86-.14,9.12-7.5,18.12-11.35,27.28-4.53,10.68-8.76,21.46-13.23,32.17-8.75,21.11-2.83,38.37,12.76,54,20.38,20.48,44,33.22,72.23,41.11,39.16,10.94,78.56,9,118.38,12.37C916.06,1737.17,955.78,1735.74,994.92,1730.05Zm-186-157.52c-3.14-17.38-3.22-37.79,2.86-53.94,28.26-75.12,63-146.29,135.89-190.08,22.67-13.64,44.16-29.24,65.81-44.5,72.19-50.78,152.4-86.3,231.44-124.55,46.71-22.6,93.39-42.23,144.34-51.35,30.92-5.56,61.84-11.23,92.92-15.81,9.62-1.41,19.92-.63,29.55,1.11,44.56,8.12,58.72,31.14,45.76,74.24-11.46,38.1-22.44,76.79-48.66,108a845.11,845.11,0,0,1-60.87,65.63c-49,47.07-99,93-148.65,139.5-6,5.66-14.31,10.4-17.39,17.4-14.42,32.7-41.2,48.53-72.85,61.43-28.91,11.78-55.6,29-83.44,43.46a299.67,299.67,0,0,1-31.65,14.44c-61.39,23.13-126.54,24-184.37,32.13-11.13-.84-16.12-1.7-21.07-1.47C837.25,1650.7,818.25,1624.42,808.88,1572.53Z" transform="translate(-246.01 -683.07)"/><path fill="#fff" fill-rule="evenodd" d="M1445,1206.44c-34.25,16.77-69.32,32-102.88,49.94-28.77,15.44-57.71,31.23-88.22,56.69,39,21,73.93,18,108.23,13.7,30.82-3.82,30.62-5.38,55.95,6.36,31-31.41,61.63-63.81,82.58-103.91,3.36-6.46,2.79-15,4.17-23.27C1482.88,1197,1464.1,1197.07,1445,1206.44Z" transform="translate(-246.01 -683.07)"/><path fill="#fff" fill-rule="evenodd" d="M1144.1,1335.77c-24.17,10.7-39.29,28.68-46.11,56.84,16.51,11.92,28.13,7.46,39.62-.76,24.1-17.28,48.39-34.29,72.37-51.66,2.25-1.63,3.08-5.17,5.9-10.25l-19.59-17.5C1177.09,1321,1160.61,1328.45,1144.1,1335.77Z" transform="translate(-246.01 -683.07)"/><path fill="#fff" fill-rule="evenodd" d="M1286.57,1255.85c45.25-24.17,89.61-50.21,135.68-72.72,48.82-23.85,49.49-22.48,99.53-17.57,12.17-23.34,9.15-36.67-11.25-39.94-14.31-2.27-29.58-1-44.08,1-22.87,3.23-45.34,9.47-68.21,12.72-55.57,8-103.79,33.17-148.46,64.89-27.41,19.47-34.41,49.82-32.62,87.25C1242.77,1278.39,1264.83,1267.47,1286.57,1255.85Z" transform="translate(-246.01 -683.07)"/><path fill="#fff" fill-rule="evenodd" d="M1241.18,1492.65c55.64-38.44,97.88-81.25,143.27-129.8-43.3-1.47-80.55-2.17-117.72-4.21-25.38-1.41-45.41,6.4-60.68,30.28C1216.61,1420.14,1227.68,1452.81,1241.18,1492.65Z" transform="translate(-246.01 -683.07)"/><path fill="#fff" fill-rule="evenodd" d="M1696.69,1232.82c-5.46,8.74-10.2,12.8-9.88,16.36,2.34,25.36-9.08,44.34-25.67,61.81-21.57,22.68-42.94,45.6-63.5,69.18-21.7,24.91-41.77,51.25-63.59,76.08-41.75,47.47-89.62,89.78-142.46,122.67-89.61,55.7-180,111.17-278.95,150.34-41.77,16.56-84.55,29.14-129.16,33.35-37.81,3.58-76,4.27-114,5.29-30.56.82-61.13.17-94.79.17,37,40.66,72.46,79.64,108.09,118.43,3.3,3.6,7.79,6.18,11.92,8.94,55,36.83,116,55.34,181.91,54.83,67.81-.53,135.37-6.36,201.29-23,28.73-7.24,56-20.33,84.41-29,45-13.64,85.56-35,123.22-62.89,41.74-30.81,74.71-69.73,106.42-110.29s61.28-82.34,79.08-131.27c14.68-40.31,30.72-80.21,43.9-121,16.16-50.15,11-101.58,2.81-152.36C1713.33,1293,1704.86,1266.07,1696.69,1232.82Z" transform="translate(-246.01 -683.07)"/><path fill="#fff" fill-rule="evenodd" d="M1453.74,976.61c-.84-3.22-1.82-6.42-2.9-9.59-5-3.8-8.58-9.66-12.06-15.69-21.52-37.24-43.23-74.38-64.73-111.64-26-45.14-68.19-73.3-112.45-94.63-48.85-23.52-101.7-38.31-157.26-41.76-26.07-1.64-198.46-15.67-224.68-18.9-4.9-.61-118.33-6.54-168.22,12.7-7.51,2.91-16.12,3.66-24.28,4-67.56,3.09-129.22,25.92-188.52,56.36-8.74,4.5-17.44,10.07-24.36,16.94-63.46,63-127.63,124.71-169.73,206.33-32.64,63.34-51.62,129.52-56,199-3.69,59.15-5.72,119.27,10.73,177.83,2.63,9.32.2,19.93,1.64,29.73,2.37,16.28,3.73,33.21,9.43,48.39,48.74,129.92,125.24,240.36,234.59,326.7,18.07,14.28,38.57,25.73,58.86,36.84,62.64,34.19,126.53,65.65,198.58,74.6,19.43,2.42,39.18,2.11,60.9,3.15-.63-26.19-16-38.88-31.07-51.17-23.05-18.83-47.3-35.87-59.41-65.28-3.24-7.89-14.74-12.33-22.3-18.5-16.67-13.65-34-26.61-49.59-41.34-15.35-14.45-21-31.53-14.87-53.91,8.72-31.82,13.08-64.83,20.4-97.08,2.13-9.36,7.69-18,12.25-26.75,31.89-60.6,74.09-114.67,120-164.06,53.9-58,116.23-108.26,175.15-161.58,6-5.4,13.7-8.81,21.87-14,0-8.12-1.45-16.44.29-24,4.54-19.76,16-27.81,35.87-21.45,12.93,4.15,21,1.14,31.91-4.58,55.64-29.23,111.07-58.39,172.93-74.08,38.33-9.69,74.86-26.34,112.19-39.88A614.42,614.42,0,0,1,1455,991.26C1454.52,986.39,1454.08,981.5,1453.74,976.61ZM319.36,1182.49c1.78-10.32,8.33-18.3,20-18.08,10.22.19,19.26,13.09,18.72,29.43-2,3.72-4.93,11.39-9.68,17.75-7,9.43-24.73,6.34-27.82-5A57.72,57.72,0,0,1,319.36,1182.49Zm-24,171c4-5.79,6.85-13.67,12.53-17.53,9.35-6.36,20.48-10.13,34.49-16.67,11.3,9.8,19.81,17.18,27.66,24-1.87,5.2-2.13,9.94-4.14,10.88C343.63,1364.49,321.12,1377,295.39,1353.51Zm82,153.85c-4-3.19-14.68-7.47-17.22-14.64-4.34-12.33,12.25-29.8,25.13-29.72,9.14.06,15.53,8.81,15.18,20.82C400,1499.75,394,1507.5,377.37,1507.36Zm-.88-480.07a75.06,75.06,0,0,1-25-13.65c-7.1-6.09-3.51-21.43,5.35-30.61,9.31-9.69,23.31-12.56,30.25-4.09,9,11.07,15.8,23.95,23.78,36.46C398.88,1032.81,387.18,1030.81,376.49,1027.29Zm371.18-203c10.68.39,20.9,11.64,20.76,22.8-.2,15.73-11,25.71-28.3,26.24-14,.43-23.14-7-23.16-18.63C716.93,838.2,731.61,823.67,747.67,824.25Zm-27-92.32c9.51,7,9.23,16.26,5,25.83S714.25,774,703.24,772.24c-18.83-3.07-19.34-18.36-21-32.41C693.7,727.33,705.55,720.85,720.68,731.93ZM538.34,839.24c2-12.42,18.43-25.12,32.26-25,21,.22,37.23,14,36.29,30.94-1,18.78-12.61,29.72-31.33,29.59C553.63,874.62,535.38,857.2,538.34,839.24ZM521.27,973.67c8.61-4.83,21.16,0,23.39,9.71,2.18,9.43,3,19.16,4.18,27.1-.08,14.56-10.91,21.53-23.6,17.28-11.53-3.87-20.16-10.9-23.08-22.81C499.79,995.28,509.77,980.13,521.27,973.67Zm-54.59,183.79c21.27-15.3,36.24-8.49,40.72,18.14,1.05,6.26.16,12.82.16,25.67-24.57-3-48.2,4.8-56.85-26.18C455.78,1169.38,460.26,1162.06,466.68,1157.46Zm-28.18,188c-2.8-11.66,7.71-24.52,18.45-22.5,6.39,1.19,14.15,8.08,16.55,14.26,3.66,9.44-7.71,21.25-23.32,23.52C446.93,1356.74,440,1351.77,438.5,1345.47Zm71.13,303.9c-.47,13-9.11,21.19-21.37,20.35-14.44-1-22.35-10.9-21-26.24,1.3-14.23,9.55-22.54,20.85-21C502.33,1624.54,510.16,1634.3,509.63,1649.37ZM492.8,1493.7c26.8-33.61,27.82-33.73,59.31-7.14C525.63,1524,517.33,1525,492.8,1493.7ZM545.88,1372a28.49,28.49,0,0,1-5.23-16.62c.08-4.28,4.07-8.61,6.67-12.68,11.48-18,22.06-17.74,36.5,1.1,1.86,2.41,2.29,6,5.33,14.32-11.47,6.83-20.58,13.21-30.53,17.67C555.39,1377.23,548.13,1375,545.88,1372Zm33.29,296.91c-6.34,4.73-17.61-5.7-19-16.34s5.92-21,15.58-19.33c6.91,1.21,13,6.92,21.73,11.89C590.31,1654.83,586.11,1663.71,579.17,1668.92ZM592,1195.58c4.13-11.15,13.5-12.23,24-12,6.08,1.18,12.77,1.26,18.08,4,3.57,1.82,8.15,8.84,7.1,11.13-3.77,8.16-8.44,17-15.25,22.33-7.42,5.85-17.58,8.25-26.62.39C591.1,1214.38,588.2,1205.62,592,1195.58ZM621.47,1789c-8.92-.2-15.53-10.31-14.56-22.21,1.2-14.48,11.84-27.71,19.63-23.13,7.62,4.46,12.61,13.44,17,18.32C643.12,1776.7,631.34,1789.2,621.47,1789Zm63.35-314.66c-5.26,16.26-17.34,28.26-33.52,32.17-6.23,1.53-14.93-7.1-26.48-13.19,11.63-16.22,19.28-30.64,30.69-40.86,4.2-3.77,18,.75,25.9,4.64C684.73,1458.7,686.48,1469.18,684.82,1474.31Zm-22.74-447.86c5.64-7.32,11-14.83,16.93-21.82,7.36-8.65,15.25-20.82,28-13,8.5,5.22,13.41,16.28,23.2,29C704.48,1036.92,686.19,1053.81,662.08,1026.45Zm48.65,343.66c-6.92-.73-14.81-7.32-18.92-13.45-2.22-3.32.93-12.77,4.54-17,11.13-13.11,25.28-22.27,43.35-19,5.23.94,9.47,7.42,12.94,10.35C749.82,1352,728.43,1372,710.73,1370.11Zm57.58-194.69c-12.06,7-24.45,9.53-38.12-2.89,2.23-8.34,3.93-17.91,7.42-26.77,4.22-10.82,14.52-14.52,24.25-11.35,6.49,2.13,13.26,9.26,16,15.79C782,1160,778,1169.83,768.31,1175.42Zm69.24-134.51c-6.33-2.44-10.65-10.06-19.16-18.8,9.69-8.61,14-13.76,19.51-17,8.13-4.87,17.64-12.6,25.55-11.56,14.23,1.93,12.77,17.12,14.35,28.1,1.64,11.4-4.75,19.43-15.82,20.31C853.83,1042.57,844.77,1043.71,837.55,1040.91Zm39.38,154.85c-9.39-4.93-13.37-15.78-9-24.74,5.62-11.66,16.49-10.18,35.12,4.79C890.66,1198.81,887.45,1201.27,876.93,1195.76Zm58.58-304.19a78.52,78.52,0,0,1-7.33,18.23c-6.42,11.41-15.85,14.82-24.27,9.69-10.8-6.58-15.32-18.82-10.5-29.25,5.11-11,11.92-20,26-18.69C930.11,871.9,938.18,881.51,935.51,891.57Zm19-83.74c-16.26,0-32.72-3.44-48.68-7.16-9.53-2.25-17.48-7.91-18.67-20.15-.73-7.73-4.75-15.19-7.59-22.62-8.8-23.08,5.91-44.11,30.14-42.21,6.4.52,12.6,3.56,18.91,5.48,20.38,6.24,40.76,12.46,62.66,19.15,9.38,16.11,7.45,29.12,2.12,41.55C986.19,798.69,971.92,807.89,954.48,807.83Zm81.72,212.48c-11.2,2.17-20.53,5.08-29.93,5.57-14.24.77-22.51-13.91-16.3-27.45,5.31-11.53,17.84-17.36,32.84-13.84C1039.85,988.6,1039.7,1001.48,1036.2,1020.31Zm88.89-137.14c-5.5,5.5-13,9.4-20.26,12.66-14.07,6.34-25,.51-29.38-14.79-4.5-15.48,2.17-25.4,18-26.73,3.2-.26,6.46,0,15.55,0-1-.06,4.42-1,8.49.92,5.46,2.54,12.66,6.57,13.93,11.33S1129.1,879.16,1125.09,883.17Zm15.75-78.06c-18.19-.72-30.88-5.91-32.62-24.81-1.71-18.51,6.32-28.51,24.91-28.8,9.39-.14,18.84,2.87,27.15,4.28C1169.21,781.16,1145.28,788.77,1140.84,805.11Zm80.31,185.39c-19.06,17.21-33.72,15.82-55.19-7.77,12.71-10.45,21.86-19.56,32.49-26.24,9.89-6.24,18.71-.47,24.79,7.87C1229.71,973.26,1229.42,983.05,1221.15,990.5Zm22.1-112.1c-12,7.14-25.56,3.48-33.78-9.77-2.73-4.42-2.87-13.66,0-17.63,4.59-6.24,12.19-11.1,19.49-14.25,5.64-2.44,13.71-3.54,19.06-1.31,8.51,3.56,15.67,10.41,28.2,19.26C1261.91,865.11,1253.07,872.6,1243.25,878.4Z" transform="translate(-246.01 -683.07)"/></svg>
+          </div>
+        </button>
+        <button class="cat-dot-btn" data-cat="2" onclick="selectExpCat(this)">
+          <div class="dot" style="width:100%;height:100%;background:var(--red);">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 79.5 60.12"><path fill="#fcfcfc" fill-rule="evenodd" d="M37,34a8.8,8.8,0,0,0-3.11-.5,8.78,8.78,0,0,0-3.1.5c-.67.25-1.09.57-1.09.87s.42.62,1.09.88a8.74,8.74,0,0,0,3.1.5,8.8,8.8,0,0,0,3.11-.5c.67-.25,1.08-.57,1.08-.88S37.66,34.26,37,34Zm-7.21,3.4a.6.6,0,0,1-.08-.28v-1a4.05,4.05,0,0,0,.78.4,10.78,10.78,0,0,0,6.8,0,4.16,4.16,0,0,0,.79-.4v1c0,.35-.42.7-1.09,1a9.3,9.3,0,0,1-6.19,0,2.42,2.42,0,0,1-1-.64l0-.08Zm51.9-.79,8-.5h.09a1.47,1.47,0,0,1,1,.41,1.49,1.49,0,0,1,.46,1,.34.34,0,0,1,0,.09v6.61a1.66,1.66,0,0,1-.46,1.12,1.61,1.61,0,0,1-1.09.52l-8,.5h-.09A1.47,1.47,0,0,1,80.14,45a.46.46,0,0,1,0-.1V38.25a1.62,1.62,0,0,1,.46-1.12,1.66,1.66,0,0,1,1.09-.52ZM51.9,42.34a2.63,2.63,0,0,1,2,1,3.89,3.89,0,0,1,0,4.75,2.54,2.54,0,0,1-4.07,0,3.89,3.89,0,0,1,0-4.75A2.62,2.62,0,0,1,51.9,42.34ZM39.41,45.22l-9.53.64h0v2.22l9.53-.64h0ZM29.83,45l9.57-.64h.05a.77.77,0,0,1,.53.21.75.75,0,0,1,.24.51.35.35,0,0,0,0,.06v2.26A.81.81,0,0,1,40,48a.88.88,0,0,1-.55.27l-9.57.63h-.05a.79.79,0,0,1-.54-.21.77.77,0,0,1-.24-.52V45.87a.82.82,0,0,1,.78-.83ZM78.9,49.45A15.1,15.1,0,0,0,72,47.78a15.73,15.73,0,0,0-11.8,5.51,20.59,20.59,0,0,0,0,26.69,16.33,16.33,0,0,0,8.09,5,16.36,16.36,0,0,1-6-4.37,20.23,20.23,0,0,1-4.8-13.29,19.84,19.84,0,0,1,4.86-13.19,15.73,15.73,0,0,1,11.78-5.48,15.21,15.21,0,0,1,4.73.76Zm4.91,3.84a20.59,20.59,0,0,1,0,26.69,15.93,15.93,0,0,1-9.74,5.36H74a14.59,14.59,0,0,1-11-5.22,19.41,19.41,0,0,1-4.6-12.75A19,19,0,0,1,63,54.72,14.93,14.93,0,0,1,74.16,49.5a14,14,0,0,1,4.93.89A15,15,0,0,1,83.5,53c.11.11.21.22.31.34ZM69,86a16.94,16.94,0,0,1-9.41-5.5,21.4,21.4,0,0,1,0-27.78A16.57,16.57,0,0,1,72,47h.16c-.2-.05-.39-.11-.59-.15a14.15,14.15,0,0,0-3.41-.42,15.46,15.46,0,0,0-11.79,5.78,22.54,22.54,0,0,0,0,28.09A15.48,15.48,0,0,0,68.18,86L69,86ZM82.65,57a17.08,17.08,0,0,1,0,20.72,10.37,10.37,0,0,1-16.74,0,17,17,0,0,1,0-20.72,10.37,10.37,0,0,1,16.74,0Zm-8.37-5.06a11.63,11.63,0,0,1,9,4.55,17.87,17.87,0,0,1,0,21.75,11.17,11.17,0,0,1-18,0,17.87,17.87,0,0,1,0-21.75A11.63,11.63,0,0,1,74.28,51.93ZM69.5,65.55a3,3,0,0,1,.24-.85A7.33,7.33,0,0,1,71,62.37a5.37,5.37,0,0,1,8.64,0,8.45,8.45,0,0,1,0,10.3,5.37,5.37,0,0,1-8.64,0,8.14,8.14,0,0,1-1.75-5.15,9.08,9.08,0,0,1,.22-2Zm2.29-2.31a2.1,2.1,0,0,0-.43,0c.09-.14.2-.28.3-.41a4.58,4.58,0,0,1,7.38,0,7.67,7.67,0,0,1,0,9.27,4.58,4.58,0,0,1-7.38,0,7.22,7.22,0,0,1-1.55-4.26v0a2.11,2.11,0,0,0,3.35,0,3.16,3.16,0,0,0,0-3.84,2.18,2.18,0,0,0-1.68-.84ZM22.54,56l-7.29-3.74V84a3.87,3.87,0,0,0,.4,1.63,1.76,1.76,0,0,0,.77.87l6.28,2.62a2.82,2.82,0,0,1-.16-1V56Zm-7.29-4.66V40.52l7.3,2.81a2.81,2.81,0,0,0,0,.29V55.09l-7.29-3.74Zm8.11,4.78,31.31-3.06a22.86,22.86,0,0,0-4,13.15,22.58,22.58,0,0,0,5.11,14.57,17.72,17.72,0,0,0,5.46,4.37L25.34,90a1.48,1.48,0,0,1-.73-.06,1.32,1.32,0,0,1-.43-.21h0a1.51,1.51,0,0,1-.2-.17,1.74,1.74,0,0,1-.45-.63,2,2,0,0,1-.15-.79V56.12Zm71.09-7.76L80.92,49.69a16.15,16.15,0,0,0-5.75-2.41A15.3,15.3,0,0,0,71.79,46a14.87,14.87,0,0,0-3.61-.44,16.26,16.26,0,0,0-12.41,6.07c-.15.17-.3.35-.44.54l-32,3.12V43.61a2,2,0,0,1,.49-1.3A1.72,1.72,0,0,1,25,41.73l24.19-1.34a2.48,2.48,0,0,0,1.83-1l2.84-3.53a1.87,1.87,0,0,1,.56-.47,1.61,1.61,0,0,1,.69-.18l37.33-2.09a1.7,1.7,0,0,1,.68.1h0a1.65,1.65,0,0,1,.58.39,1.91,1.91,0,0,1,.42.61,2.27,2.27,0,0,1,.15.75ZM53.8,34.87a2.68,2.68,0,0,0-.55.52l-2.84,3.53a1.78,1.78,0,0,1-.56.47,1.53,1.53,0,0,1-.68.18L25,40.92a2.52,2.52,0,0,0-1.74.84,2.8,2.8,0,0,0-.49.77l-7.27-2.8a2,2,0,0,1,.26-.37,1.68,1.68,0,0,1,1.18-.58l12.37-.69a3.56,3.56,0,0,0,1.18.78,9.31,9.31,0,0,0,3.41.59,9.07,9.07,0,0,0,3.41-.59,2.57,2.57,0,0,0,1.52-1.31l2.3-.13a2.58,2.58,0,0,0,1-.27,2.6,2.6,0,0,0,.81-.68L45.78,33a1.8,1.8,0,0,1,.43-.4ZM48,32.23l7.21,2.2,35.9-2-5.13-2.06A6.48,6.48,0,0,0,84.65,30,7.86,7.86,0,0,0,83.08,30ZM32.59,59.72l-.62.07a1.27,1.27,0,0,0-.8.43,1.31,1.31,0,0,0-.33.85V80.72a.57.57,0,0,0,0,.13.86.86,0,0,0,.29.58.93.93,0,0,0,.62.23h.12l.62-.07a1.27,1.27,0,0,0,.8-.43,1.26,1.26,0,0,0,.33-.85V60.52a.91.91,0,0,0-.91-.81ZM31.88,59A2.14,2.14,0,0,0,30,61.07V80.72a1.62,1.62,0,0,0,0,.22,1.72,1.72,0,0,0,.56,1.1,1.71,1.71,0,0,0,1.16.44H32l.62-.07a2.11,2.11,0,0,0,1.32-.71,2.07,2.07,0,0,0,.54-1.39V60.66a1.62,1.62,0,0,0,0-.22,1.72,1.72,0,0,0-.56-1.1,1.71,1.71,0,0,0-1.16-.44H32.5Zm38.5-20.43,2.56-.22a.39.39,0,0,0,.37-.44.41.41,0,0,0-.44-.37l-2.55.21a.41.41,0,0,0-.38.44A.41.41,0,0,0,70.38,38.55Zm-12.18,1,8.5-.7a.41.41,0,0,0,.37-.44.41.41,0,0,0-.44-.38l-8.49.7a.41.41,0,1,0,.06.82Zm24.47,42.7,10.54-1.43a1.73,1.73,0,0,0,1.1-.62,1.94,1.94,0,0,0,.44-1.27l-.29-29.74L81.93,50.41a17.68,17.68,0,0,1,2.49,2.33,21.4,21.4,0,0,1,0,27.78,17.85,17.85,0,0,1-1.75,1.73Z" transform="translate(-15.25 -29.94)"/></svg>
+          </div>
+        </button>
+        <button class="cat-dot-btn" data-cat="3" onclick="selectExpCat(this)">
+          <div class="dot" style="width:100%;height:100%;background:var(--blue);">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 61.35 82.75"><path fill="#fff" d="M80.73,47c-1.29-7.19-9.47-11.35-15.5-13.69A28.14,28.14,0,0,0,60.64,32a33.16,33.16,0,0,0,2-3.81C63.2,27.15,64,26,64.49,24.77c2.53.86,5.05,1.87,7.63,2.94.77.32,1.46-.9.82-1.42-6.88-5.6-18.13-7.32-26.73-6-4.13.65-14,1.51-15.8,6.07-.21.53.58,1,.95.55,1.32-1.51,3.79-2.52,6.55-3.2a22.81,22.81,0,0,0,2.71,5.49,18.35,18.35,0,0,0,2.05,2.92c-2.47.4-4.86.9-7.1,1.45-7.89,2-12.34,9-14,16.48-2.16,9.9-.6,21.74-.18,31.75.17,4.22-.75,12.08,4.51,13.32,1.6,1.38,4.49,1,6.82.87-.68.8-1.23,1.79-1.83,2.63s-1.37,2.17-1,3.35a.84.84,0,0,0,1.22.5,5.76,5.76,0,0,0,1.83-3A9.68,9.68,0,0,0,34.07,96a2.32,2.32,0,0,1,.37,0c5.42,0,10.78,1.89,16.17.39a89.31,89.31,0,0,0,17.87.24,6.85,6.85,0,0,0,.76,1.65c.49.85,1,1.69,1.52,2.51a1.11,1.11,0,0,0,1.91-1.11,16.17,16.17,0,0,0-2.28-3.25c1.06-.12,2.11-.26,3.11-.42C81.77,94.59,80,88,80.68,81.07,81.69,70.15,82.68,57.89,80.73,47ZM41.78,27.84a33.69,33.69,0,0,0-2.38-4.43,70.87,70.87,0,0,1,9.5-1.12A37.54,37.54,0,0,1,62.06,24c-.54,1-1,2.12-1.43,3a14.73,14.73,0,0,0-1.78,4.69,52.67,52.67,0,0,0-14.56.19C43.44,30.56,42.53,29.26,41.78,27.84ZM58.34,43.06a5.32,5.32,0,0,1-1.93.69c-2,.48-14.56,1.32-13.53-2.32,3.06.22,6.14-.93,9.29-.8a22.84,22.84,0,0,1,4.43.62C56.79,41.3,59.44,42.25,58.34,43.06ZM36,86.43c-2.94,1.58-5.73-1.83-5.76-4.49a4.42,4.42,0,0,1,3.17-4.18c.36-.14,1-.33,1.56-.56.07,0,.11.07.19.09,2.29.63,4.25.9,4.23,3.72A6.52,6.52,0,0,1,36,86.43ZM60.65,71.32c-10.15,0-20.5,1.44-30.59.48a.53.53,0,0,0-.18,0c.9-7.57,0-15.43.09-23,13.43,2,27.18-1.88,40.62.32a1,1,0,0,0,0,.24c.81,4.56.5,8.81.32,13.39-.06,1.38.89,8.32-1.72,8.5C66.35,71.46,63.5,71.31,60.65,71.32Zm12,12.26c-.53,3.16-3.72,4.32-6.56,3.81s-3.84-3.5-3.23-6c.55-2.27,2.54-3.16,4.43-4.13l.05,0C70.46,78.42,73.34,79.65,72.68,83.58Z" transform="translate(-20.49 -19.89)"/></svg>
+          </div>
+        </button>
+        <button class="cat-dot-btn" data-cat="4" onclick="selectExpCat(this)">
+          <div class="dot" style="width:100%;height:100%;background:var(--purple);">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 43.04 79.74"><path fill="#fff" d="M70.32,69.79c-2.41-4.43-6-6.63-10.11-8-.06-6.12-.09-12.25-.15-18.37V42a22.35,22.35,0,0,1,3.43,1.38,2.08,2.08,0,0,0,2.1-3.59,21.89,21.89,0,0,0-5.5-2.68,52,52,0,0,0-1-11.6,1.45,1.45,0,0,0-2.77,0A59,59,0,0,0,54.79,36a23.43,23.43,0,0,0-9.35,1.14c-.06-.88-.1-1.75-.17-2.63-.13-1.77-1.4-6.63.24-8.13s-.4-3.38-2-2.62c-3.94,1.84-3.43,5.77-3.29,9.58.08,2,.18,4.11.27,6.17-6.32,4-11.73,12.49-5.81,19.2A14.91,14.91,0,0,0,41.45,63q.38,9.78.65,19.55A36.47,36.47,0,0,1,34.84,81L35,79.66c.34-2.7-3.74-2.93-4.53-.61l-1,3a2.63,2.63,0,0,0,1.21,3c2.43,1.18,6.69,2.15,11.58,2.64q.16,6.33.29,12.67c.06,3,4.48,3.7,5.3.72a61.1,61.1,0,0,0,1.49-7.36,2.45,2.45,0,0,0-1.6-2.52c0-1.06,0-2.12-.08-3.19a63.64,63.64,0,0,0,7.58-.27c.09,4.35.2,8.7.37,13.05.13,3.44,5.26,3.45,5.34,0a36.36,36.36,0,0,0-.08-4.18c-.06-3.24-.13-6.49-.2-9.73C69.7,84.82,75.77,79.78,70.32,69.79ZM38.08,49.47a8,8,0,0,1,2.66-3.63c.15,3.28.3,6.57.44,9.85,0,.43,0,.86,0,1.29C38.63,55.5,37,53.17,38.08,49.47ZM61.81,81.4c-.42.15-.84.28-1.26.4q-.15-7.23-.26-14.46a13.77,13.77,0,0,1,3.39,2.46C67.48,73.63,67.38,79.33,61.81,81.4ZM45.87,44c0-.41,0-.81-.07-1.21A19.73,19.73,0,0,1,54.59,41c-.11,6.56.3,13.24.37,19.46-2.77-.55-5.62-1-8.35-1.62C46.38,53.9,46.15,48.92,45.87,44Zm7.42,38.76c-2,.12-3.88.18-5.78.17q-.27-9.33-.65-18.65c2.71.43,5.49.71,8.13,1.28q0,8.55.13,17.09Z" transform="translate(-29.35 -23.63)"/></svg>
+          </div>
+        </button>
+      </div>
+      <div class="tkt-heading" style="margin-top:20px">$</div>
+      <div style="display:flex;align-items:baseline;margin-top:8px;margin-bottom:16px">
+        <input id="expAmountInput" type="number" inputmode="decimal" placeholder="0.00" class="tkt-input" onkeydown="if(event.key==='Enter')document.getElementById('expDescInput').focus()">
+      </div>
+      <div style="border-top:1px dashed #eee;margin:0 -24px 16px;"></div>
+      <input id="expDescInput" type="text" placeholder="What was it?" autocomplete="off" class="tkt-input" style="font-size:16px;font-weight:normal;" onkeydown="if(event.key==='Enter')addExpense()">
+    </div>
+    <div class="tkt-perforation"><div class="tkt-perforation-line"></div></div>
+    <div class="tkt-stub">
+      <div class="tkt-stub-line">1 transaction · 2026</div>
+      <div class="tkt-stub-line">New York Travel System</div>
+    </div>
+    <div class="tkt-mag"></div>
+    <button class="tkt-action" onclick="addExpense()">
+      <span class="tkt-action-chevrons"><<<<<<<<<<<<<<<</span>
+      <span class="tkt-action-label">ADD IT</span>
+    </button>
+  </div>
+</div>
+
+<!-- ══════════════ WISH TICKET ══════════════ -->
+<div class="screen tkt-screen" id="wishTicketScreen">
+  <div class="ticket">
+    <div class="tkt-top">
+      <button class="tkt-back" onclick="closeWishTicket()">←</button>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+        <div class="dot md wish">W</div>
+        <div id="wishTktCatLabel" class="eyebrow" style="opacity:0.6">Tech</div>
+      </div>
+      <div class="cat-dots" style="margin-bottom:20px">
+        <button class="cat-dot-btn selected" data-wcat="TECH" onclick="selectWishCat(this)">
+          <div class="dot" style="width:100%;height:100%;background:var(--blue);">
+            <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M9 9h6M9 13h4"/></svg>
+          </div>
+        </button>
+        <button class="cat-dot-btn" data-wcat="BOOKS" onclick="selectWishCat(this)">
+          <div class="dot" style="width:100%;height:100%;background:var(--green);">
+            <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M4 4.5A2.5 2.5 0 016.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15z"/></svg>
+          </div>
+        </button>
+        <button class="cat-dot-btn" data-wcat="CLOTHES" onclick="selectWishCat(this)">
+          <div class="dot" style="width:100%;height:100%;background:var(--orange);">
+            <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6.3 2L2 6l3.5 2L4 20h16l-1.5-12L22 6l-4.3-4H15a3 3 0 01-6 0H6.3z"/></svg>
+          </div>
+        </button>
+        <button class="cat-dot-btn" data-wcat="OTHER" onclick="selectWishCat(this)">
+          <div class="dot" style="width:100%;height:100%;background:var(--purple);">
+            <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
+          </div>
+        </button>
+      </div>
+      <div class="tkt-heading">Wish</div>
+      <div style="display:flex;align-items:baseline;margin-top:20px;margin-bottom:16px">
+        <input id="wishNameInput" type="text" placeholder="Item name" autocomplete="off" class="tkt-input" onkeydown="if(event.key==='Enter')document.getElementById('wishPriceInput').focus()">
+      </div>
+      <div style="border-top:1px dashed #eee;margin:0 -24px 16px;"></div>
+      <div style="display:flex;align-items:baseline;margin-bottom:16px">
+        <span style="font-size:16px;font-weight:bold;color:#ccc;margin-right:4px">$</span>
+        <input id="wishPriceInput" type="number" inputmode="decimal" placeholder="Price (optional)" class="tkt-input" style="font-size:16px;font-weight:normal;" onkeydown="if(event.key==='Enter')addWishItem()">
+      </div>
+    </div>
+    <div class="tkt-perforation"><div class="tkt-perforation-line"></div></div>
+    <div class="tkt-stub">
+      <div class="tkt-stub-line">1 wish · 2026</div>
+      <div class="tkt-stub-line">Save item to wishlist</div>
+    </div>
+    <div class="tkt-mag"></div>
+    <button class="tkt-action" onclick="addWishItem()">
+      <span class="tkt-action-chevrons"><<<<<<<<<<<<<<<</span>
+      <span class="tkt-action-label">ADD IT</span>
+    </button>
+  </div>
+</div>
+
+<!-- ══════════════ ACTIVITY TICKET ══════════════ -->
+<div class="screen tkt-screen" id="activityTicketScreen">
+  <div class="ticket">
+    <div class="tkt-top">
+      <button class="tkt-back" onclick="closeActivityTicket()">←</button>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px">
+        <div class="dot md itin">I</div>
+        <div id="actTktDayLabel" class="eyebrow" style="opacity:0.6">Day</div>
+      </div>
+      <div class="tkt-heading">Activity</div>
+      <div style="display:flex;align-items:baseline;margin-top:28px;margin-bottom:20px">
+        <input id="actTktInput" type="text" placeholder="e.g. MoMA visit" autocomplete="off" class="tkt-input" onkeydown="if(event.key==='Enter')saveActivity()">
+      </div>
+      <div style="border-top:1px dashed #ddd;margin:0 -24px 20px;"></div>
+      <div class="eyebrow">Add to itinerary</div>
+    </div>
+    <div class="tkt-perforation"><div class="tkt-perforation-line"></div></div>
+    <div class="tkt-stub">
+      <div class="tkt-stub-line">Itinerary · 2026</div>
+      <div class="tkt-stub-line">New activity</div>
+    </div>
+    <div class="tkt-mag"></div>
+    <button class="tkt-action" onclick="saveActivity()">
+      <span class="tkt-action-chevrons"><<<<<<<<<<<<<<<</span>
+      <span class="tkt-action-label">ADD IT</span>
+    </button>
+  </div>
+</div>
+
+<!-- ══════════════ NOTE TICKET ══════════════ -->
+<div class="screen tkt-screen" id="noteTicketScreen">
+  <div class="ticket">
+    <div class="tkt-top">
+      <button class="tkt-back" onclick="closeNoteTicket()">←</button>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px">
+        <div class="dot md notes">N</div>
+        <div id="noteTktHeading" class="eyebrow" style="opacity:0.6">NEW NOTE</div>
+      </div>
+      <div class="tkt-heading">Note</div>
+      <div style="display:flex;align-items:baseline;margin-top:20px;margin-bottom:16px">
+        <input id="noteTktTitle" type="text" placeholder="Title" autocomplete="off" class="tkt-input"
+          onkeydown="if(event.key==='Enter')document.getElementById('noteTktBody').focus()">
+      </div>
+      <div style="border-top:1px dashed #eee;margin:0 -24px 16px;"></div>
+      <textarea id="noteTktBody" placeholder="Write anything..." rows="4" class="tkt-input"
+        style="font-size:16px;font-weight:normal;resize:none;line-height:1.5;"></textarea>
+    </div>
+    <div class="tkt-perforation"><div class="tkt-perforation-line"></div></div>
+    <div class="tkt-stub">
+      <div class="tkt-stub-line">NYTS // Note · 2026</div>
+      <div class="tkt-stub-line">Trip scratch pad</div>
+    </div>
+    <div class="tkt-mag"></div>
+    <button class="tkt-action" onclick="saveNote()">
+      <span class="tkt-action-chevrons"><<<<<<<<<<<<<<<</span>
+      <span class="tkt-action-label">SAVE IT</span>
+    </button>
+  </div>
+</div>
+
+
+<script>
+// ═══════════════════════════════════════════
+// NYTS v15 — JavaScript
+// ═══════════════════════════════════════════
+
+// ── CONSTANTS ──
+const CAT_NAMES = { '1':'Food', '2':'Activities', '3':'Transit', '4':'Purchase' };
+const CAT_POOL  = { '1':false, '2':false, '3':false, '4':true };
+const CAT_COLORS = { '1':'var(--orange)', '2':'var(--red)', '3':'var(--blue)', '4':'var(--purple)' };
+
+const PLACES_DATA = [{"name": "🛎️ Riverside Hotel 🛎️", "desc": "", "lat": 40.7857249, "lon": -73.9817683, "cat": "Hotel"}, {"name": "The New Yorker A Wyndham Hotel", "desc": "", "lat": 40.7526096, "lon": -73.9933202, "cat": "Hotel"}, {"name": "Museo Americano de Historia Natural", "desc": "", "lat": 40.7813241, "lon": -73.9739882, "cat": "Museum"}, {"name": "Museo Solomon R. Guggenheim", "desc": "", "lat": 40.7829796, "lon": -73.9589706, "cat": "Museum"}, {"name": "The National Jazz Museum in Harlem", "desc": "", "lat": 40.8098897, "lon": -73.9430911, "cat": "Museum"}, {"name": "MoMA PS1", "desc": "", "lat": 40.7456014, "lon": -73.947097, "cat": "Museum"}, {"name": "The Morgan Library & Museum", "desc": "Museum (but has nice giftshop)", "lat": 40.7492258, "lon": -73.9813971, "cat": "Museum"}, {"name": "Museo Metropolitano de Arte", "desc": "", "lat": 40.7794366, "lon": -73.963244, "cat": "Museum"}, {"name": "Neue gallerie", "desc": "", "lat": 40.781264, "lon": -73.9603267, "cat": "Museum"}, {"name": "MoMA", "desc": "", "lat": 40.7614327, "lon": -73.9776216, "cat": "Museum"}, {"name": "Museum of Broadway", "desc": "", "lat": 40.7576446, "lon": -73.9843382, "cat": "Museum"}, {"name": "Skyscraper Museum", "desc": "", "lat": 40.7057375, "lon": -74.017749, "cat": "Museum"}, {"name": "Museo Nacional de Matemáticas", "desc": "", "lat": 40.7406545, "lon": -73.9946802, "cat": "Museum"}, {"name": "Colección Frick", "desc": "", "lat": 40.7710857, "lon": -73.9673861, "cat": "Museum"}, {"name": "Poster House", "desc": "", "lat": 40.7435919, "lon": -73.9933284, "cat": "Museum"}, {"name": "Museum of the Moving Image", "desc": "", "lat": 40.7563454, "lon": -73.9239496, "cat": "Museum"}, {"name": "Museo de Tránsito de Nueva York", "desc": "", "lat": 40.69057, "lon": -73.9900678, "cat": "Museum"}, {"name": "Museo de la Ciudad de Nueva York", "desc": "", "lat": 40.7924939, "lon": -73.9519089, "cat": "Museum"}, {"name": "Museo Brooklyn", "desc": "", "lat": 40.6712062, "lon": -73.9636306, "cat": "Museum"}, {"name": "Museo Nacional de Diseño Cooper-Hewitt", "desc": "", "lat": 40.7843958, "lon": -73.9578732, "cat": "Museum"}, {"name": "New York Hall of Science", "desc": "", "lat": 40.7472583, "lon": -73.8516925, "cat": "Museum"}, {"name": "Irish Hunger Memorial", "desc": "", "lat": 40.7150615, "lon": -74.0163681, "cat": "Museum"}, {"name": "The Noguchi Museum", "desc": "", "lat": 40.766813, "lon": -73.9380539, "cat": "Museum"}, {"name": "SPYSCAPE", "desc": "", "lat": 40.7651801, "lon": -73.9835135, "cat": "Museum"}, {"name": "El Museo del Barrio", "desc": "", "lat": 40.7931183, "lon": -73.9514063, "cat": "Museum"}, {"name": "Mercer Labs", "desc": "", "lat": 40.7104778, "lon": -74.0105948, "cat": "Museum"}, {"name": "National September 11 Memorial & Museum", "desc": "", "lat": 40.7115776, "lon": -74.0133362, "cat": "Museum"}, {"name": "The Studio Museum in Harlem", "desc": "", "lat": 40.8082859, "lon": -73.9476926, "cat": "Museum"}, {"name": "Arte Museum New York", "desc": "", "lat": 40.7472656, "lon": -74.008927, "cat": "Museum"}, {"name": "MoMA", "desc": "", "lat": 40.7614327, "lon": -73.9776216, "cat": "Museum"}, {"name": "Color Factory NYC", "desc": "", "lat": 40.725773, "lon": -74.0053337, "cat": "Museum"}, {"name": "National Museum of the American Indian", "desc": "", "lat": 40.7039861, "lon": -74.0136889, "cat": "Museum"}, {"name": "Museo del Sexo", "desc": "", "lat": 40.7440291, "lon": -73.9872529, "cat": "Museum"}, {"name": "Rose Center for Earth and Space", "desc": "", "lat": 40.781506, "lon": -73.9734537, "cat": "Museum"}, {"name": "The Strand", "desc": "", "lat": 40.783776, "lon": -73.9745324, "cat": "Shop"}, {"name": "Enchantments", "desc": "Bookstore of the occult", "lat": 40.7270625, "lon": -73.9795365, "cat": "Shop"}, {"name": "Codex", "desc": "", "lat": 40.7254162, "lon": -73.9924344, "cat": "Shop"}, {"name": "Mercer Street Books & Records", "desc": "", "lat": 40.7266575, "lon": -73.9967088, "cat": "Shop"}, {"name": "Mast Books", "desc": "", "lat": 40.7247207, "lon": -73.9843259, "cat": "Shop"}, {"name": "East Village Books", "desc": "", "lat": 40.727389, "lon": -73.9845324, "cat": "Shop"}, {"name": "Aeon Bookstore", "desc": "", "lat": 40.7138286, "lon": -73.9909233, "cat": "Shop"}, {"name": "P&T Knitwear Bookstore, Coffee, & Podcast Studio", "desc": "", "lat": 40.7219297, "lon": -73.9881633, "cat": "Shop"}, {"name": "Alabaster Bookshop", "desc": "", "lat": 40.7330431, "lon": -73.9902231, "cat": "Shop"}, {"name": "Yu & Me Books", "desc": "", "lat": 40.714981, "lon": -73.9995739, "cat": "Shop"}, {"name": "Village Works", "desc": "", "lat": 40.728991, "lon": -73.989316, "cat": "Shop"}, {"name": "Bonnie Slotnick Cookbooks", "desc": "", "lat": 40.72528, "lon": -73.990661, "cat": "Shop"}, {"name": "Book Club Bar", "desc": "", "lat": 40.723004, "lon": -73.983206, "cat": "Shop"}, {"name": "Kitchen Arts & Letters, books on food and drink", "desc": "", "lat": 40.7841295, "lon": -73.9519732, "cat": "Shop"}, {"name": "Kinokuniya New York", "desc": "", "lat": 40.754107, "lon": -73.9849938, "cat": "Shop"}, {"name": "Housing Works Bookstore", "desc": "", "lat": 40.7246035, "lon": -73.9965755, "cat": "Shop"}, {"name": "Logos Bookstore", "desc": "", "lat": 40.7744956, "lon": -73.9485114, "cat": "Shop"}, {"name": "McNally Jackson Books SoHo", "desc": "", "lat": 40.7254231, "lon": -74.0006905, "cat": "Shop"}, {"name": "Black Gold Records", "desc": "", "lat": 40.6773127, "lon": -73.9981354, "cat": "Shop"}, {"name": "Vinyl Fantasy", "desc": "", "lat": 40.703432, "lon": -73.9269119, "cat": "Shop"}, {"name": "Academy Records", "desc": "", "lat": 40.7297547, "lon": -73.9826708, "cat": "Shop"}, {"name": "A-1 Record Shop", "desc": "", "lat": 40.7258333, "lon": -73.9844444, "cat": "Shop"}, {"name": "Argosy Book Store", "desc": "", "lat": 40.7624795, "lon": -73.969201, "cat": "Shop"}, {"name": "Unnameable Books", "desc": "", "lat": 40.6788494, "lon": -73.9682571, "cat": "Shop"}, {"name": "Printed Matter, Inc.", "desc": "", "lat": 40.7506953, "lon": -74.0059269, "cat": "Shop"}, {"name": "Captured Record Shop", "desc": "", "lat": 40.7259894, "lon": -73.9518391, "cat": "Shop"}, {"name": "Ergot Records", "desc": "", "lat": 40.72523, "lon": -73.9905144, "cat": "Shop"}, {"name": "Archestratus Books + Foods", "desc": "", "lat": 40.7328678, "lon": -73.9551597, "cat": "Shop"}, {"name": "Stavros Niarchos Foundation Library (SNFL)", "desc": "", "lat": 40.7518974, "lon": -73.9818374, "cat": "Shop"}, {"name": "Queens Public Library at Hunters Point", "desc": "", "lat": 40.7453222, "lon": -73.9580667, "cat": "Shop"}, {"name": "Biblioteca Jefferson Market", "desc": "", "lat": 40.7345909, "lon": -73.9992165, "cat": "Shop"}, {"name": "Three Lives & Company", "desc": "", "lat": 40.734387, "lon": -74.0015401, "cat": "Shop"}, {"name": "The Corner Bookstore", "desc": "", "lat": 40.7851492, "lon": -73.9555033, "cat": "Shop"}, {"name": "Village Revival Records", "desc": "", "lat": 40.7294262, "lon": -74.0014722, "cat": "Shop"}, {"name": "Strand Book Store", "desc": "", "lat": 40.7332515, "lon": -73.9909532, "cat": "Shop"}, {"name": "Barnes & Noble", "desc": "", "lat": 40.7369679, "lon": -73.9897209, "cat": "Shop"}, {"name": "Academy Records & CDs", "desc": "", "lat": 40.7387849, "lon": -73.9930044, "cat": "Shop"}, {"name": "The Drama Book Shop", "desc": "", "lat": 40.7549611, "lon": -73.9908015, "cat": "Shop"}, {"name": "Midtown Comics Times Square", "desc": "", "lat": 40.7548485, "lon": -73.9883862, "cat": "Shop"}, {"name": "Rizzoli Bookstore", "desc": "", "lat": 40.7435735, "lon": -73.9891809, "cat": "Shop"}, {"name": "Anable Basin Sailing Bar & Grill", "desc": "Simple food, great view", "lat": 40.7494609, "lon": -73.9556911, "cat": "Food"}, {"name": "Taverna Kyclades Astoria", "desc": "", "lat": 40.7743819, "lon": -73.9079475, "cat": "Food"}, {"name": "Zabar's", "desc": "", "lat": 40.784759, "lon": -73.9796504, "cat": "Food"}, {"name": "Levain Bakery", "desc": "Most famous: chocolate chip and walnut cookie", "lat": 40.7799589, "lon": -73.9802984, "cat": "Food"}, {"name": "Gray's Papaya", "desc": "", "lat": 40.7783878, "lon": -73.9815659, "cat": "Food"}, {"name": "Birria Landia UWS", "desc": "", "lat": 40.7774971, "lon": -73.9823456, "cat": "Food"}, {"name": "Magnolia Bakery", "desc": "", "lat": 40.7756833, "lon": -73.9803361, "cat": "Food"}, {"name": "Sylvia's", "desc": "", "lat": 40.8086445, "lon": -73.944479, "cat": "Food"}, {"name": "Tom's Restaurant", "desc": "(Seinfeld Dinner and Suzanne Vega song)", "lat": 40.8055187, "lon": -73.9653887, "cat": "Food"}, {"name": "Tacos y quesadillas Oaxaca", "desc": "", "lat": 40.7462147, "lon": -73.9943309, "cat": "Food"}, {"name": "Tziki", "desc": "", "lat": 40.7434171, "lon": -73.9958238, "cat": "Food"}, {"name": "Una Pizza Napoletana", "desc": "Expensive (but very good aparently)", "lat": 40.7217573, "lon": -73.9886214, "cat": "Food"}, {"name": "Seafood Momo", "desc": "", "lat": 40.7630803, "lon": -73.9389481, "cat": "Food"}, {"name": "Teitel Brothers", "desc": "", "lat": 40.8548085, "lon": -73.8880459, "cat": "Food"}, {"name": "5 De Mayo", "desc": "", "lat": 40.7429185, "lon": -73.8539899, "cat": "Food"}, {"name": "La Esquina Del Camaron Mexicano", "desc": "", "lat": 40.7472501, "lon": -73.8856222, "cat": "Food"}, {"name": "Mei Lai Wah", "desc": "Spiced roast pork buns... very good (aparently)", "lat": 40.7151726, "lon": -73.9989063, "cat": "Food"}, {"name": "St. James", "desc": "", "lat": 40.7583407, "lon": -73.9248188, "cat": "Food"}, {"name": "Luna de Xelaju", "desc": "", "lat": 40.705868, "lon": -73.8019058, "cat": "Food"}, {"name": "Rokhat Kosher Bakery", "desc": "", "lat": 40.7258333, "lon": -73.8594444, "cat": "Food"}, {"name": "Zaragoza", "desc": "", "lat": 40.7300141, "lon": -73.9808626, "cat": "Food"}, {"name": "David's Brisket House", "desc": "", "lat": 40.6790911, "lon": -73.9494893, "cat": "Food"}, {"name": "Church of Sweden", "desc": "Yes, it has coffee (aparently)", "lat": 40.7571333, "lon": -73.9774639, "cat": "Food"}, {"name": "El Sabroso", "desc": "Great food at a good price (they say)", "lat": 40.7540428, "lon": -73.9916533, "cat": "Food"}, {"name": "Yonah Schimmel's Knish Bakery", "desc": "", "lat": 40.7231417, "lon": -73.9901583, "cat": "Food"}, {"name": "Nonnas of the World", "desc": "", "lat": 40.6420631, "lon": -74.0773315, "cat": "Food"}, {"name": "Katz's Delicatessen", "desc": "Try the pastrami sandwich", "lat": 40.722233, "lon": -73.987429, "cat": "Food"}, {"name": "Two Boots Pizza East Village", "desc": "", "lat": 40.7236772, "lon": -73.9850623, "cat": "Food"}, {"name": "Two Boots Pizza West Village", "desc": "", "lat": 40.7331487, "lon": -74.0028038, "cat": "Food"}, {"name": "Veselka", "desc": "Ukrainian", "lat": 40.7290155, "lon": -73.9871139, "cat": "Food"}, {"name": "Kafana", "desc": "Comida croata/balcánica", "lat": 40.7243198, "lon": -73.9784447, "cat": "Food"}, {"name": "Ukus", "desc": "Croatian Restaurant!", "lat": 40.7628952, "lon": -73.9131534, "cat": "Food"}, {"name": "Joe's Pizza Broadway", "desc": "", "lat": 40.7546795, "lon": -73.9870291, "cat": "Food"}, {"name": "Russ & Daughters", "desc": "Bagel smeared with cream cheese", "lat": 40.7544987, "lon": -73.9995268, "cat": "Food"}, {"name": "Corner Bistro", "desc": "Famous burgers", "lat": 40.7380482, "lon": -74.003741, "cat": "Food"}, {"name": "Bubba Gump Shrimp Co.", "desc": "Expensive but tourist experience", "lat": 40.7572071, "lon": -73.9863737, "cat": "Food"}, {"name": "The Canuck", "desc": "Hoser Hut in real life (good place to eat a poutine if you want and watch a hockey game)", "lat": 40.7459659, "lon": -74.0014391, "cat": "Food"}, {"name": "LOS TACOS No.1", "desc": "lugar de comida favorito de meme y johannes", "lat": 40.7573214, "lon": -73.987654, "cat": "Food"}, {"name": "The Hungarian Pastry Shop", "desc": "", "lat": 40.8035812, "lon": -73.9636934, "cat": "Food"}, {"name": "Fu Zhou Wei Zhong Wei Jia Xiang Feng Wei", "desc": "Cheap eats", "lat": 40.7138354, "lon": -73.9941403, "cat": "Food"}, {"name": "Tasty Hand - Pulled Noodles", "desc": "Cheap eats!", "lat": 40.7142425, "lon": -73.9978903, "cat": "Food"}, {"name": "Bodhi Kosher Vegetarian Restaurant", "desc": "cheap eats!", "lat": 40.7163863, "lon": -73.9992785, "cat": "Food"}, {"name": "Wah Fung No.1 Fast Food", "desc": "cheap eats!", "lat": 40.7173189, "lon": -73.9944649, "cat": "Food"}, {"name": "King Dumplings", "desc": "cheap eat", "lat": 40.7159626, "lon": -73.9917091, "cat": "Food"}, {"name": "Peking Duck Sandwich Stall", "desc": "cheap eat", "lat": 40.7588954, "lon": -73.8304746, "cat": "Food"}, {"name": "Vanessa's Dumpling House", "desc": "cheap eat! ask for scallion pancakes<br><br>This is where Brennan Lee Mulligan went to eat dumplings :)", "lat": 40.7183133, "lon": -73.9917561, "cat": "Food"}, {"name": "Shu Jiao Fu Zhou", "desc": "Cheap eat, cash only, 6 large pork and chive dumplings", "lat": 40.7174109, "lon": -73.9920876, "cat": "Food"}, {"name": "KUNG FU Kitchen 805", "desc": "cheap eat!", "lat": 40.7615395, "lon": -73.9869963, "cat": "Food"}, {"name": "Ali's Trinbago Roti Shop", "desc": "cheap eat!", "lat": 40.6805724, "lon": -73.950652, "cat": "Food"}, {"name": "San Marzano", "desc": "cheap eat", "lat": 40.7279967, "lon": -73.9884379, "cat": "Food"}, {"name": "Caffe Reggio", "desc": "cheap eat", "lat": 40.7303079, "lon": -74.0003706, "cat": "Food"}, {"name": "Sal, Kris & Charlie's Deli", "desc": "cheap eat!<br><br> \"Italian subs the size of a bodybuilder's arm for $10. Top notch quality.\" -", "lat": 40.7731932, "lon": -73.9116143, "cat": "Food"}, {"name": "Raffetto's Fresh Pasta", "desc": "Fresh made-to-go sauces and pasta. Get the cheese and spinach ravioli-- 48 in a box for like $6, homemade bolognese sauce for another 4, a loaf of bread for 2, and a bag of parmesan for $1.50, and you've got a great meal with leftovers or a nice date night under $15. Cash only, closed Mondays.\"", "lat": 40.728154, "lon": -74.0017231, "cat": "Food"}, {"name": "Bánh Mì Cô Út 2", "desc": "big banh mi with lots of fillings", "lat": 40.7178695, "lon": -73.9922595, "cat": "Food"}, {"name": "Saigon Shack", "desc": "Banh Mi", "lat": 40.7296889, "lon": -74.000625, "cat": "Food"}, {"name": "Mamoun's Falafel", "desc": "cheap eat", "lat": 40.728813, "lon": -73.988495, "cat": "Food"}, {"name": "Rudy's Bar & Grill", "desc": "Free hotdogs with your beer", "lat": 40.7600309, "lon": -73.9917951, "cat": "Food"}, {"name": "King Of Falafel & Shawarma Cart", "desc": "Cart. Cheap eat", "lat": 40.759219, "lon": -73.9728576, "cat": "Food"}, {"name": "Sammy’s Halal Food", "desc": "cheap eat", "lat": 40.7534115, "lon": -73.9860791, "cat": "Food"}, {"name": "Bedouin Tent", "desc": "Cheap eat", "lat": 40.6869576, "lon": -73.9844699, "cat": "Food"}, {"name": "Mamoun's Falafel", "desc": "cheap eat", "lat": 40.7302174, "lon": -74.0004276, "cat": "Food"}, {"name": "Karczma", "desc": "cheap eat, polish specialties", "lat": 40.7299969, "lon": -73.9551152, "cat": "Food"}, {"name": "Punjabi Deli", "desc": "Cheap eat, indian food", "lat": 40.7226468, "lon": -73.9867099, "cat": "Food"}, {"name": "NY Dosas", "desc": "cheap eat, enormous dosas", "lat": 40.7304667, "lon": -73.9988685, "cat": "Food"}, {"name": "Chinelos 2", "desc": "cheap eat, burritos", "lat": 40.8202928, "lon": -73.9537757, "cat": "Food"}, {"name": "Caravan Chicken", "desc": "cheap eat, peruvian food :)", "lat": 40.7605556, "lon": -73.9219444, "cat": "Food"}, {"name": "Acuario Cafe", "desc": "cheap eat :)", "lat": 40.7542401, "lon": -73.9928416, "cat": "Food"}, {"name": "Bobwhite Counter", "desc": "Cheap eat, and \"best fried chicken in Manhattan\"", "lat": 40.7236373, "lon": -73.9789605, "cat": "Food"}, {"name": "Alligator Lounge", "desc": "Free pizza with your beer", "lat": 40.7139803, "lon": -73.9489598, "cat": "Food"}, {"name": "Empanada Mama Hell’s Kitchen", "desc": "cheap eat, empanadas!", "lat": 40.764437, "lon": -73.9885436, "cat": "Food"}, {"name": "Empanada Mama Times Square (40th St)", "desc": "", "lat": 40.7548424, "lon": -73.9883434, "cat": "Food"}, {"name": "Empanada Mama LES", "desc": "", "lat": 40.718769, "lon": -73.991031, "cat": "Food"}, {"name": "Empanada Mama UES", "desc": "cheap eat", "lat": 40.7694688, "lon": -73.9550072, "cat": "Food"}, {"name": "Bagels On the Square", "desc": "Cheap breakfast sandwiches", "lat": 40.7305426, "lon": -74.0021742, "cat": "Food"}, {"name": "Broad Nosh Bagels Deli & Catering 58th Street", "desc": "cheap eat", "lat": 40.7676542, "lon": -73.9832955, "cat": "Food"}, {"name": "Brooklyn Gourmet Deli Corporation", "desc": "bodega", "lat": 40.7131407, "lon": -73.9620328, "cat": "Food"}, {"name": "Happiness Gourmet Deli", "desc": "bodega", "lat": 40.7178304, "lon": -73.9896462, "cat": "Food"}, {"name": "Soho Garden", "desc": "bodega", "lat": 40.7230969, "lon": -73.9954013, "cat": "Food"}, {"name": "Blue Sky Deli (Hajji’s)", "desc": "Bodega", "lat": 40.792191, "lon": -73.938549, "cat": "Food"}, {"name": "A Rod Grocery", "desc": "bodega", "lat": 40.6934658, "lon": -73.9671828, "cat": "Food"}, {"name": "U N Gourmet Plaza", "desc": "Bodega", "lat": 40.7534307, "lon": -73.9667228, "cat": "Food"}, {"name": "Joe's Gourmet Health Deli", "desc": "Bodega", "lat": 40.8148981, "lon": -73.9593428, "cat": "Food"}, {"name": "Andy's Deli", "desc": "Bodega", "lat": 40.7796748, "lon": -73.9804242, "cat": "Food"}, {"name": "George’s Deli", "desc": "bodega", "lat": 40.766386, "lon": -73.9153258, "cat": "Food"}, {"name": "York Deli", "desc": "Bodega", "lat": 40.7710941, "lon": -73.9504082, "cat": "Food"}, {"name": "Sunny & Annie's Deli", "desc": "Bodega", "lat": 40.724645, "lon": -73.981711, "cat": "Food"}, {"name": "Urban Hawker", "desc": "multiple vendors", "lat": 40.7606943, "lon": -73.9821337, "cat": "Food"}, {"name": "Deploy Coffee", "desc": "", "lat": 40.7454495, "lon": -73.9574782, "cat": "Food"}, {"name": "King Souvlaki", "desc": "Cash only!", "lat": 40.7643426, "lon": -73.9235858, "cat": "Food"}, {"name": "Alimama Tea", "desc": "Alimama’s massive boba-filled cream puffs", "lat": 40.7158089, "lon": -73.9991885, "cat": "Food"}, {"name": "Golden Steamer", "desc": "deliciously doughy bao buns", "lat": 40.7190587, "lon": -73.9961695, "cat": "Food"}, {"name": "New Absolute Bagels", "desc": "cash only", "lat": 40.8025065, "lon": -73.9674142, "cat": "Food"}, {"name": "Brooklyn Brewery", "desc": "", "lat": 40.7217625, "lon": -73.9577086, "cat": "Bar"}, {"name": "Please Don't Tell", "desc": "", "lat": 40.7271371, "lon": -73.9837411, "cat": "Bar"}, {"name": "MILON", "desc": "", "lat": 40.7262726, "lon": -73.9865524, "cat": "Food"}, {"name": "The Halal Guys", "desc": "", "lat": 40.7617724, "lon": -73.9793516, "cat": "Food"}, {"name": "Momofuku Noodle Bar", "desc": "", "lat": 40.7292083, "lon": -73.984415, "cat": "Food"}, {"name": "Motorino Pizza", "desc": "", "lat": 40.785662, "lon": -73.973036, "cat": "Food"}, {"name": "Buvette", "desc": "", "lat": 40.7326259, "lon": -74.0043284, "cat": "Food"}, {"name": "John's of Bleecker Street", "desc": "", "lat": 40.7316187, "lon": -74.0034468, "cat": "Food"}, {"name": "Patsy's Pizzeria", "desc": "", "lat": 40.7971528, "lon": -73.9348807, "cat": "Food"}, {"name": "Cello's Pizzeria", "desc": "", "lat": 40.7286439, "lon": -73.9881729, "cat": "Food"}, {"name": "Bleecker Street Pizza", "desc": "You can ask for the Nonna Maria slice", "lat": 40.732198, "lon": -74.0034014, "cat": "Food"}, {"name": "Omusubi Gonbei", "desc": "Cheap onigiris", "lat": 40.7508931, "lon": -73.9771112, "cat": "Food"}, {"name": "Coba Pizzeria", "desc": "", "lat": 40.7675394, "lon": -73.9347788, "cat": "Food"}, {"name": "Chubby Skewers | Authentic Chinese BBQ", "desc": "", "lat": 40.7535628, "lon": -73.9914967, "cat": "Food"}, {"name": "Charles Pan-Fried Chicken", "desc": "", "lat": 40.7778955, "lon": -73.980581, "cat": "Food"}, {"name": "Jin Mei Dumpling", "desc": "15 dumplings for cheap", "lat": 40.7129395, "lon": -73.9965684, "cat": "Food"}, {"name": "El Sazón R.D.", "desc": "comida dominicana", "lat": 40.7166726, "lon": -73.9996701, "cat": "Food"}, {"name": "Chirp", "desc": "Comida peruana relativamente barata", "lat": 40.7533793, "lon": -73.9958804, "cat": "Food"}, {"name": "A&A Bake Doubles and Roti", "desc": "", "lat": 40.680491, "lon": -73.9479489, "cat": "Food"}, {"name": "King Barka", "desc": "", "lat": 40.8233979, "lon": -73.9419076, "cat": "Food"}, {"name": "Gai Kitchen", "desc": "(cheap) thai food", "lat": 40.7154724, "lon": -73.9987784, "cat": "Food"}, {"name": "Kalye", "desc": "Filipino food. Go for the lunch specials. Sisig recommended", "lat": 40.7198165, "lon": -73.9879359, "cat": "Food"}, {"name": "Sushi Spot—78 Street", "desc": "3 rolls for 12 dollars - not great but amazing for the price", "lat": 40.7731735, "lon": -73.9570129, "cat": "Food"}, {"name": "District Saigon", "desc": "The perfect pair - lunch special", "lat": 40.7595925, "lon": -73.9200184, "cat": "Food"}, {"name": "Merguez and Frites", "desc": "sandwiches", "lat": 40.7677175, "lon": -73.9114921, "cat": "Food"}, {"name": "smashy burger | new york", "desc": "5 dollar smash burgers", "lat": 40.7361924, "lon": -73.9890465, "cat": "Food"}, {"name": "Lululala", "desc": "Korean fast food", "lat": 40.7171215, "lon": -73.9946815, "cat": "Food"}, {"name": "The Freakin Rican", "desc": "pedir tripletas", "lat": 40.7552526, "lon": -73.9183883, "cat": "Food"}, {"name": "IPPUDO Westside", "desc": "Buen Ramen a buen precio (recomendado por Lau)", "lat": 40.76349, "lon": -73.986596, "cat": "Food"}, {"name": "Russ & Daughters", "desc": "", "lat": 40.7225803, "lon": -73.9883134, "cat": "Food"}, {"name": "Di Palo's Fine Foods", "desc": "Mozarella increíble, hay muchas otras cosas. Se puede usar para armar un picnic", "lat": 40.7192277, "lon": -73.9965371, "cat": "Food"}, {"name": "Ferrara Bakery & Cafe", "desc": "Cannolis!", "lat": 40.7190779, "lon": -73.9970913, "cat": "Food"}, {"name": "Rice To Riches", "desc": "Venden arroz con leche en muchas variedades", "lat": 40.7218528, "lon": -73.9958028, "cat": "Food"}, {"name": "Creperie", "desc": "Lugar para comprar un crepe (recomendación: banana y nutella)", "lat": 40.7203348, "lon": -73.9883615, "cat": "Food"}, {"name": "El Castillo De Jagua Restaurant", "desc": "platos latinos", "lat": 40.719752, "lon": -73.987875, "cat": "Food"}, {"name": "Nuyorican Poets Cafe", "desc": "", "lat": 40.7219836, "lon": -73.9817849, "cat": "Food"}, {"name": "Pommes Frites", "desc": "belgian fries", "lat": 40.7301222, "lon": -74.0002813, "cat": "Food"}, {"name": "Paul's Da Burger Joint", "desc": "hamburguesas muy ricas", "lat": 40.7285229, "lon": -73.9880155, "cat": "Food"}, {"name": "2nd Ave Deli", "desc": "", "lat": 40.7451944, "lon": -73.9791835, "cat": "Food"}, {"name": "Miss Mamie's Spoonbread Too", "desc": "\"Best fried chicken in town\" - Clinton", "lat": 40.8014403, "lon": -73.9608921, "cat": "Food"}, {"name": "Sake Bar Hagi", "desc": "Para ir post Broadway", "lat": 40.7627417, "lon": -73.9849609, "cat": "Food"}, {"name": "Churrascaria Plataforma Steakhouse", "desc": "", "lat": 40.7619155, "lon": -73.9877325, "cat": "Food"}, {"name": "Tony Dragon's Grille", "desc": "", "lat": 40.7656324, "lon": -73.9701914, "cat": "Food"}, {"name": "Viand", "desc": "", "lat": 40.7648494, "lon": -73.970189, "cat": "Food"}, {"name": "Jackson Hole", "desc": "", "lat": 40.7638014, "lon": -73.9629149, "cat": "Food"}, {"name": "Papaya King", "desc": "", "lat": 40.7785023, "lon": -73.9536069, "cat": "Food"}, {"name": "Pomodoro Rosso", "desc": "", "lat": 40.7763848, "lon": -73.9792822, "cat": "Food"}, {"name": "Ollie’s To Go: Upper West Side", "desc": "", "lat": 40.7904714, "lon": -73.9751574, "cat": "Food"}, {"name": "Carmine's - Upper West Side", "desc": "", "lat": 40.7911087, "lon": -73.9739812, "cat": "Food"}, {"name": "Tokuyamatcha & Onigirazu Bar", "desc": "Onigirazu", "lat": 40.7425694, "lon": -73.9836779, "cat": "Food"}, {"name": "Gnocchi on 9th", "desc": "gnocchi alla vodka", "lat": 40.7289606, "lon": -73.9863386, "cat": "Food"}, {"name": "The Sandwich Board", "desc": "Order the mala sandwich", "lat": 40.718519, "lon": -73.9919381, "cat": "Food"}, {"name": "Apollo Bagels", "desc": "", "lat": 40.7287547, "lon": -73.9847935, "cat": "Food"}, {"name": "Tompkins Square Bagels | East Village Bagels", "desc": "", "lat": 40.728228, "lon": -73.982291, "cat": "Food"}, {"name": "Popup Bagels", "desc": "", "lat": 40.7279221, "lon": -74.0002529, "cat": "Food"}, {"name": "Jack's Wife Freda", "desc": "", "lat": 40.7221696, "lon": -73.9974602, "cat": "Food"}, {"name": "Luigi's Pizza", "desc": "", "lat": 40.6617145, "lon": -73.9934596, "cat": "Food"}, {"name": "Shelsky's Of Brooklyn Appetizing and Delicatessen", "desc": "", "lat": 40.689386, "lon": -73.992303, "cat": "Food"}, {"name": "Sawada Coffee", "desc": "Get any coffee, tokyo style", "lat": 40.7181205, "lon": -74.0017942, "cat": "Food"}, {"name": "The Donut Pub", "desc": "get the black and white cookie", "lat": 40.7297984, "lon": -73.9928956, "cat": "Food"}, {"name": "Felix Empanadas", "desc": "Comida argentina papá", "lat": 40.7221578, "lon": -73.9879635, "cat": "Food"}, {"name": "FRANKIE'S BROOKLYN PIZZA", "desc": "La pizza favorita de Jeremy Allen White", "lat": 40.7435133, "lon": -73.9568306, "cat": "Food"}, {"name": "Defonte's Sandwich Shop", "desc": "", "lat": 40.6789615, "lon": -74.005318, "cat": "Food"}, {"name": "Hometown Bar-B-Que", "desc": "", "lat": 40.6749167, "lon": -74.0161583, "cat": "Food"}, {"name": "Mary O's Irish Soda Bread Shop", "desc": "Irish soda bread scones", "lat": 40.7269542, "lon": -73.9852758, "cat": "Food"}, {"name": "Salt Hank’s", "desc": "sandwiches", "lat": 40.7317208, "lon": -74.0034605, "cat": "Food"}, {"name": "Tashkent Supermarket Halal Food", "desc": "supermarket", "lat": 40.7329565, "lon": -73.9996755, "cat": "Food"}, {"name": "Casa 13urger", "desc": "Late night burger?", "lat": 40.7200245, "lon": -73.993799, "cat": "Food"}, {"name": "Titi's Empanadas", "desc": "empanadas", "lat": 40.7261182, "lon": -73.9839584, "cat": "Food"}, {"name": "Eileen's Special Cheesecake", "desc": "cheesecakes", "lat": 40.721568, "lon": -73.9972582, "cat": "Food"}, {"name": "Arcane Estate Coffee", "desc": "Best coffee in town (apparently)", "lat": 40.7312804, "lon": -74.0027598, "cat": "Food"}, {"name": "The Coffee Pot", "desc": "Get a Freddo", "lat": 40.7669382, "lon": -73.9209872, "cat": "Food"}, {"name": "Bahari Estiatorio", "desc": "", "lat": 40.7616348, "lon": -73.924942, "cat": "Food"}, {"name": "Ovelia", "desc": "", "lat": 40.765913, "lon": -73.9186823, "cat": "Food"}, {"name": "Gold'N Honey", "desc": "get lukma", "lat": 40.7788538, "lon": -73.9141314, "cat": "Food"}, {"name": "Monk McGinns", "desc": "", "lat": 40.7143711, "lon": -74.0096943, "cat": "Bar"}, {"name": "McSorley’s Old Ale House", "desc": "", "lat": 40.7288053, "lon": -73.9896791, "cat": "Bar"}, {"name": "230 Fifth", "desc": "Rooftop - Drinks with a view!", "lat": 40.7441081, "lon": -73.9888201, "cat": "Bar"}, {"name": "Bohemian Hall & Beer Garden", "desc": "", "lat": 40.7727451, "lon": -73.9157359, "cat": "Bar"}, {"name": "Ulysses'", "desc": "", "lat": 40.7044541, "lon": -74.0100116, "cat": "Bar"}, {"name": "Welcome To The Johnsons", "desc": "cerveza barata", "lat": 40.7197028, "lon": -73.9873361, "cat": "Bar"}, {"name": "Bar Orai", "desc": "", "lat": 40.7566056, "lon": -73.9693108, "cat": "Bar"}, {"name": "Studio 151", "desc": "", "lat": 40.7256585, "lon": -73.9780286, "cat": "Bar"}, {"name": "Eavesdrop", "desc": "", "lat": 40.724922, "lon": -73.9511595, "cat": "Bar"}, {"name": "Bar Adore", "desc": "", "lat": 40.7268273, "lon": -73.9875806, "cat": "Bar"}, {"name": "Tokyo Record Bar", "desc": "", "lat": 40.7306426, "lon": -74.0001337, "cat": "Bar"}, {"name": "NBetween", "desc": "", "lat": 40.7427259, "lon": -74.0069452, "cat": "Bar"}, {"name": "Kissa Kissa", "desc": "", "lat": 40.6756639, "lon": -73.9559666, "cat": "Bar"}, {"name": "Public Records", "desc": "", "lat": 40.6822675, "lon": -73.9863983, "cat": "Bar"}, {"name": "1707 2nd Ave", "desc": "Hidden speakeasy behind ice cream. Codeword: “I would like to visit the storage room.", "lat": 40.7795778, "lon": -73.9508415, "cat": "Bar"}, {"name": "Doris", "desc": "", "lat": 40.6813263, "lon": -73.957368, "cat": "Bar"}, {"name": "Little Canal", "desc": "", "lat": 40.7143105, "lon": -73.9904242, "cat": "Bar"}, {"name": "White Horse Tavern - West Village Bar", "desc": "", "lat": 40.7356977, "lon": -74.006192, "cat": "Bar"}, {"name": "Blind Tiger", "desc": "", "lat": 40.7318858, "lon": -74.0032253, "cat": "Bar"}, {"name": "The Empire Rooftop", "desc": "", "lat": 40.7713523, "lon": -73.9826783, "cat": "Bar"}, {"name": "Ópera Metropolitana", "desc": "", "lat": 40.7727076, "lon": -73.9839082, "cat": "Sight"}, {"name": "Septuagesimo Uno", "desc": "", "lat": 40.7786282, "lon": -73.9843342, "cat": "Park"}, {"name": "Vessel", "desc": "", "lat": 40.7538073, "lon": -74.0021537, "cat": "Sight"}, {"name": "Bethesda Fountain", "desc": "", "lat": 40.7743214, "lon": -73.9708829, "cat": "Sight"}, {"name": "Madison Square Garden", "desc": "", "lat": 40.7505045, "lon": -73.9934387, "cat": "Sight"}, {"name": "The Mall and Literary Walk", "desc": "estatuas de escritores y beautiful walk", "lat": 40.7723522, "lon": -73.9715901, "cat": "Sight"}, {"name": "Edificio Flatiron", "desc": "", "lat": 40.7410605, "lon": -73.9896986, "cat": "Sight"}, {"name": "Waldorf Astoria", "desc": "", "lat": 40.7564821, "lon": -73.9734562, "cat": "Sight"}, {"name": "Rockefeller Center", "desc": "", "lat": 40.7587402, "lon": -73.9786736, "cat": "Sight"}, {"name": "Times Square", "desc": "", "lat": 40.7579747, "lon": -73.9855426, "cat": "Sight"}, {"name": "Edificio Chrysler", "desc": "", "lat": 40.7516208, "lon": -73.975502, "cat": "Sight"}, {"name": "Empire State Building", "desc": "", "lat": 40.7484405, "lon": -73.9856644, "cat": "Sight"}, {"name": "Jardín Conservatorio", "desc": "Lo mejor de NYC según Lau", "lat": 40.7936928, "lon": -73.9524588, "cat": "Park"}, {"name": "Shinran Shonin Statue", "desc": "", "lat": 40.8017812, "lon": -73.9703055, "cat": "Sight"}, {"name": "Strawberry Fields", "desc": "", "lat": 40.7756978, "lon": -73.9747315, "cat": "Sight"}, {"name": "High Line", "desc": "", "lat": 40.7479925, "lon": -74.0047649, "cat": "Sight"}, {"name": "Ghostbusters Headquarters", "desc": "", "lat": 40.7195656, "lon": -74.0066124, "cat": "Sight"}, {"name": "Chelsea Market", "desc": "", "lat": 40.7424396, "lon": -74.0061439, "cat": "Sight"}, {"name": "Bleecker Street", "desc": "", "lat": 40.7254875, "lon": -73.9928254, "cat": "Sight"}, {"name": "The 550 Garden", "desc": "indoor garden!", "lat": 40.7615215, "lon": -73.9735986, "cat": "Park"}, {"name": "Bleecker Street 2: electric boogaloo", "desc": "", "lat": 40.7296436, "lon": -74.0021365, "cat": "Sight"}, {"name": "McGee's Pub", "desc": "How I met your mother pub!", "lat": 40.7649602, "lon": -73.9828785, "cat": "Bar"}, {"name": "Jardín Botánico de Brooklyn", "desc": "", "lat": 40.6685798, "lon": -73.9644696, "cat": "Park"}, {"name": "Washington Square Park", "desc": "", "lat": 40.7308838, "lon": -73.997332, "cat": "Park"}, {"name": "Puente de Brooklyn", "desc": "", "lat": 40.7060855, "lon": -73.9968643, "cat": "Sight"}, {"name": "Flower District", "desc": "", "lat": 40.7466253, "lon": -73.992214, "cat": "Sight"}, {"name": "Biblioteca Pública de Nueva York", "desc": "", "lat": 40.7531823, "lon": -73.9822534, "cat": "Sight"}, {"name": "Catedral de San Juan el Divino", "desc": "", "lat": 40.8038356, "lon": -73.9618754, "cat": "Sight"}, {"name": "Placa Piazzolla", "desc": "Placa Piazzolla", "lat": 40.7290276, "lon": -73.986389, "cat": "Sight"}, {"name": "Brooklyn Heights Promenade", "desc": "", "lat": 40.6964173, "lon": -73.9977463, "cat": "Sight"}, {"name": "Montague Street Walk", "desc": "Walk it!", "lat": 40.6956383, "lon": -73.9973057, "cat": "Sight"}, {"name": "Annie Hall View", "desc": "Annie Hall View", "lat": 40.7577495, "lon": -73.9594902, "cat": "Sight"}, {"name": "Fort Greene", "desc": "", "lat": 40.6920638, "lon": -73.9741874, "cat": "Park"}, {"name": "DUMBO Manhattan Bridge View", "desc": "", "lat": 40.7033165, "lon": -73.9895698, "cat": "Sight"}, {"name": "30 Rockefeller Plaza", "desc": "", "lat": 40.7593573, "lon": -73.9800723, "cat": "Sight"}, {"name": "Friends Apartment Building", "desc": "", "lat": 40.7323754, "lon": -74.0052681, "cat": "Sight"}, {"name": "West 75th Street & Amsterdam Avenue", "desc": "Take a photo of the street signs (it's HIMYM!)", "lat": 40.7805674, "lon": -73.9802174, "cat": "Sight"}, {"name": "Saks Fifth Avenue", "desc": "", "lat": 40.758138, "lon": -73.9772561, "cat": "Sight"}, {"name": "The Cage", "desc": "Basket game", "lat": 40.7311104, "lon": -74.0010194, "cat": "Sight"}, {"name": "Bloomingdale's", "desc": "", "lat": 40.762268, "lon": -73.967247, "cat": "Sight"}, {"name": "Parque de Robert F. Wagner Jr.", "desc": "", "lat": 40.7052908, "lon": -74.0187626, "cat": "Park"}, {"name": "Teatro Apollo", "desc": "", "lat": 40.8099273, "lon": -73.9501348, "cat": "Sight"}, {"name": "Little Italy Sign", "desc": "", "lat": 40.7182259, "lon": -73.997873, "cat": "Sight"}, {"name": "Jenga Tower", "desc": "", "lat": 40.7176602, "lon": -74.0061845, "cat": "Sight"}, {"name": "Boardwalk", "desc": "", "lat": 40.710664, "lon": -74.0181501, "cat": "Sight"}, {"name": "Viewpoint of the Brooklyn Bridge", "desc": "", "lat": 40.7059512, "lon": -74.0011882, "cat": "Sight"}, {"name": "Lincoln Center", "desc": "", "lat": 40.7724641, "lon": -73.9834889, "cat": "Sight"}, {"name": "Ground Zero", "desc": "", "lat": 40.7115647, "lon": -74.0132182, "cat": "Sight"}, {"name": "One World Trade Center", "desc": "", "lat": 40.7127431, "lon": -74.0133795, "cat": "Sight"}, {"name": "Oculus Center", "desc": "", "lat": 40.7115663, "lon": -74.0114261, "cat": "Sight"}, {"name": "Battery Park", "desc": "", "lat": 40.7029312, "lon": -74.0153603, "cat": "Park"}, {"name": "Tompkins Square Park", "desc": "", "lat": 40.7264295, "lon": -73.9817841, "cat": "Park"}, {"name": "Radio City Music Hall", "desc": "", "lat": 40.759976, "lon": -73.9799772, "cat": "Sight"}, {"name": "Grand Central Terminal", "desc": "", "lat": 40.752714, "lon": -73.9772269, "cat": "Sight"}, {"name": "Iglesia Católica de San Pedro", "desc": "", "lat": 40.7124833, "lon": -74.0095306, "cat": "Sight"}, {"name": "Iglesia de la Trinidad", "desc": "", "lat": 40.7078931, "lon": -74.0117901, "cat": "Sight"}, {"name": "Charging Bull", "desc": "", "lat": 40.7055746, "lon": -74.0134499, "cat": "Sight"}, {"name": "Ayuntamiento de Nueva York", "desc": "", "lat": 40.7127744, "lon": -74.006059, "cat": "Sight"}, {"name": "Edificio Dakota", "desc": "", "lat": 40.7767888, "lon": -73.9761657, "cat": "Sight"}, {"name": "Alicia en el País de las Maravillas", "desc": "", "lat": 40.7750361, "lon": -73.9665454, "cat": "Sight"}, {"name": "Jane's Carousel", "desc": "", "lat": 40.70445, "lon": -73.9923885, "cat": "Sight"}, {"name": "Belnord Apartments", "desc": "the Arcadia", "lat": 40.78836, "lon": -73.9754679, "cat": "Sight"}, {"name": "Castillo Belvedere", "desc": "", "lat": 40.7794302, "lon": -73.9690677, "cat": "Sight"}, {"name": "Top of The Rock", "desc": "", "lat": 40.7593495, "lon": -73.9794087, "cat": "Sight"}, {"name": "Bryant Park", "desc": "", "lat": 40.7535367, "lon": -73.9829529, "cat": "Park"}, {"name": "Capilla de San Pablo", "desc": "la iglesia más vieja de Manhattan", "lat": 40.7113281, "lon": -74.0091831, "cat": "Sight"}, {"name": "Parque Colón", "desc": "", "lat": 40.7155504, "lon": -74.0000423, "cat": "Park"}, {"name": "Mulberry Street Bar", "desc": "bar ambientado en los 20", "lat": 40.7200885, "lon": -73.9968914, "cat": "Sight"}, {"name": "Lugar Histórico Nacional del Nacimiento de Theodore Roosevelt", "desc": "", "lat": 40.7385931, "lon": -73.9890127, "cat": "Sight"}, {"name": "Carl Schurz Park", "desc": "", "lat": 40.7751302, "lon": -73.9436973, "cat": "Park"}, {"name": "The Langham, New York, Fifth Avenue", "desc": "", "lat": 40.7501833, "lon": -73.983759, "cat": "Sight"}, {"name": "Riverside Park", "desc": "", "lat": 40.8095625, "lon": -73.9673125, "cat": "Park"}, {"name": "Pomander Walk", "desc": "", "lat": 40.7941928, "lon": -73.9731603, "cat": "Sight"}, {"name": "Pier 35", "desc": "to see the sunset", "lat": 40.7094517, "lon": -73.9884141, "cat": "Sight"}, {"name": "Elevated Acre", "desc": "", "lat": 40.7033361, "lon": -74.0085763, "cat": "Park"}, {"name": "Paley Park", "desc": "", "lat": 40.7602157, "lon": -73.9751349, "cat": "Park"}, {"name": "Rudolph de Harak Digital Clock", "desc": "", "lat": 40.7071539, "lon": -74.0049962, "cat": "Sight"}, {"name": "Athens Square", "desc": "", "lat": 40.767786, "lon": -73.9223319, "cat": "Sight"}, {"name": "Myzel Chocolates", "desc": "", "lat": 40.7636312, "lon": -73.9798955, "cat": "Shop"}, {"name": "Philip Williams Posters", "desc": "", "lat": 40.7151633, "lon": -74.0087077, "cat": "Shop"}, {"name": "FAO Schwarz", "desc": "", "lat": 40.758761, "lon": -73.979345, "cat": "Shop"}, {"name": "Videogamesnewyork", "desc": "", "lat": 40.728104, "lon": -73.990449, "cat": "Shop"}, {"name": "Art of Play", "desc": "Puzzles, magic and nice things like that", "lat": 40.6914734, "lon": -73.9980412, "cat": "Shop"}, {"name": "Toy Tokyo", "desc": "Juguetes coleccionables :)", "lat": 40.7270801, "lon": -73.9890052, "cat": "Shop"}, {"name": "CityStore", "desc": "Para souvenirs de NY :)", "lat": 40.71341, "lon": -74.0035208, "cat": "Shop"}, {"name": "Eataly - Flatiron", "desc": "", "lat": 40.742045, "lon": -73.9900845, "cat": "Food"}, {"name": "Bergdorf Goodman", "desc": "", "lat": 40.7634824, "lon": -73.9740152, "cat": "Shop"}, {"name": "Chess Forum", "desc": "", "lat": 40.7291673, "lon": -73.999299, "cat": "Shop"}, {"name": "Hex & Company", "desc": "Boardgames & Hobbies (also coffee)", "lat": 40.8065907, "lon": -73.965241, "cat": "Sight"}, {"name": "MUJI Fifth Avenue", "desc": "", "lat": 40.7524878, "lon": -73.9813489, "cat": "Shop"}, {"name": "Twenty Sided", "desc": "D&D", "lat": 40.7130234, "lon": -73.9579098, "cat": "Sight"}, {"name": "Gamestoria", "desc": "", "lat": 40.7582133, "lon": -73.9168314, "cat": "Sight"}, {"name": "Forbidden Planet", "desc": "", "lat": 40.733425, "lon": -73.9907694, "cat": "Sight"}, {"name": "The Compleat Strategist", "desc": "Most rated for D&D stuff", "lat": 40.7475413, "lon": -73.9842092, "cat": "Sight"}, {"name": "SOS Chefs", "desc": "Kitchen supplies", "lat": 40.7248861, "lon": -73.9815452, "cat": "Food"}, {"name": "Kalustyan's", "desc": "Spices!", "lat": 40.7428238, "lon": -73.9821117, "cat": "Food"}, {"name": "The LEGO® Store Fifth Avenue", "desc": "", "lat": 40.7591338, "lon": -73.9771693, "cat": "Shop"}, {"name": "B&H Photo Vídeo", "desc": "", "lat": 40.7529444, "lon": -73.9963276, "cat": "Shop"}, {"name": "Economy Candy", "desc": "", "lat": 40.720105, "lon": -73.987861, "cat": "Shop"}, {"name": "George Glazer Gallery", "desc": "", "lat": 40.7825777, "lon": -73.9474292, "cat": "Shop"}, {"name": "Desert Island", "desc": "", "lat": 40.7139599, "lon": -73.9526459, "cat": "Shop"}, {"name": "The Locavore Variety Store", "desc": "Assorted lovely things", "lat": 40.7345839, "lon": -73.9986295, "cat": "Shop"}, {"name": "Casa Magazines", "desc": "", "lat": 40.7376595, "lon": -74.0045009, "cat": "Shop"}, {"name": "Fishs Eddy", "desc": "", "lat": 40.7386847, "lon": -73.9900849, "cat": "Shop"}, {"name": "McNulty's Tea & Coffee Co", "desc": "Para comprar el mejor café de tu vida (y traerlo)", "lat": 40.733499, "lon": -74.005186, "cat": "Food"}, {"name": "Pageant Print Shop", "desc": "", "lat": 40.7267565, "lon": -73.9905562, "cat": "Shop"}, {"name": "Geographicus Rare Antique Maps", "desc": "", "lat": 40.6871955, "lon": -73.9243399, "cat": "Shop"}, {"name": "Micro Center", "desc": "", "lat": 40.658742, "lon": -74.0040142, "cat": "Shop"}, {"name": "Nintendo NEW YORK", "desc": "", "lat": 40.7580022, "lon": -73.9794385, "cat": "Shop"}, {"name": "H&M", "desc": "", "lat": 40.7570262, "lon": -73.9780219, "cat": "Shop"}, {"name": "Michaels", "desc": "Arts and crafts store", "lat": 40.7420623, "lon": -73.9937968, "cat": "Shop"}, {"name": "Blick Art Materials", "desc": "", "lat": 40.7407614, "lon": -73.9940626, "cat": "Shop"}, {"name": "Tienda Disney", "desc": "", "lat": 40.7582524, "lon": -73.9850513, "cat": "Shop"}, {"name": "Mr. Throwback", "desc": "Thrift store (sports related)", "lat": 40.7276503, "lon": -73.9831528, "cat": "Shop"}, {"name": "Awoke Vintage Brooklyn", "desc": "Thrift store", "lat": 40.7167066, "lon": -73.9593135, "cat": "Shop"}, {"name": "Sony Square NYC", "desc": "", "lat": 40.7418011, "lon": -73.9867779, "cat": "Shop"}, {"name": "Metropolis Vintage", "desc": "vintage clothes", "lat": 40.7327132, "lon": -73.9913922, "cat": "Shop"}, {"name": "Dylan's Candy Bar", "desc": "", "lat": 40.753612, "lon": -74.0012423, "cat": "Shop"}, {"name": "Exit9 Gift Emporium", "desc": "", "lat": 40.7238956, "lon": -73.9852898, "cat": "Shop"}, {"name": "The Brooklyn Strategist", "desc": "", "lat": 40.6946712, "lon": -73.9914646, "cat": "Sight"}, {"name": "tm:rw", "desc": "", "lat": 40.7563572, "lon": -73.988081, "cat": "Shop"}, {"name": "Pelé Soccer - Times Square", "desc": "", "lat": 40.7587253, "lon": -73.9847786, "cat": "Shop"}, {"name": "Kith Manhattan", "desc": "They sell Nothing Phone? I think", "lat": 40.7260327, "lon": -73.9943202, "cat": "Shop"}, {"name": "MoMA Design Store, SoHo", "desc": "", "lat": 40.7229688, "lon": -73.9979997, "cat": "Shop"}, {"name": "UNIQLO Soho Store", "desc": "", "lat": 40.7234986, "lon": -73.9982019, "cat": "Shop"}, {"name": "Hex & Company", "desc": "", "lat": 40.7703728, "lon": -73.953777, "cat": "Sight"}, {"name": "Guitar Center", "desc": "", "lat": 40.736742, "lon": -73.9947538, "cat": "Shop"}, {"name": "MoMA Design Store - Midtown", "desc": "", "lat": 40.7611144, "lon": -73.9778728, "cat": "Shop"}, {"name": "Guitar Center", "desc": "", "lat": 40.6888856, "lon": -73.9815471, "cat": "Shop"}, {"name": "Loove Labs", "desc": "", "lat": 40.719325, "lon": -73.96195, "cat": "Shop"}, {"name": "Kellards", "desc": "", "lat": 40.7355898, "lon": -73.9351095, "cat": "Shop"}, {"name": "Filson", "desc": "look backpacks", "lat": 40.7378837, "lon": -73.9898417, "cat": "Shop"}, {"name": "Century 21 NYC", "desc": "Todo con descuento", "lat": 40.7104444, "lon": -74.0105085, "cat": "Shop"}, {"name": "What Goes Around Comes Around", "desc": "thrift shop", "lat": 40.7227169, "lon": -74.002968, "cat": "Shop"}, {"name": "ZARA", "desc": "", "lat": 40.7225111, "lon": -73.9995769, "cat": "Shop"}, {"name": "MUJI SOHO", "desc": "", "lat": 40.7207083, "lon": -74.0009746, "cat": "Shop"}, {"name": "Essex Market", "desc": "", "lat": 40.7180004, "lon": -73.98819, "cat": "Food"}, {"name": "Burlington coat Factory", "desc": "", "lat": 40.7428631, "lon": -73.9931566, "cat": "Shop"}, {"name": "Jazz Record Center", "desc": "", "lat": 40.7466069, "lon": -73.995929, "cat": "Shop"}, {"name": "Paragon Sports", "desc": "", "lat": 40.7377091, "lon": -73.9904174, "cat": "Shop"}, {"name": "Macy's", "desc": "", "lat": 40.7504817, "lon": -73.9882938, "cat": "Shop"}, {"name": "Williams-Sonoma", "desc": "", "lat": 40.7685526, "lon": -73.9831866, "cat": "Shop"}, {"name": "Crate & Barrel", "desc": "", "lat": 40.7385072, "lon": -73.9906307, "cat": "Shop"}, {"name": "Schaller & Weber", "desc": "", "lat": 40.7775585, "lon": -73.9517706, "cat": "Food"}, {"name": "Delphinium Home", "desc": "", "lat": 40.7615383, "lon": -73.9895892, "cat": "Shop"}, {"name": "A Shop of Things", "desc": "", "lat": 40.7155972, "lon": -73.9912685, "cat": "Shop"}, {"name": "Lockwood Williamsburg", "desc": "", "lat": 40.7183588, "lon": -73.9546954, "cat": "Shop"}, {"name": "Goods For The Study West Village", "desc": "", "lat": 40.7331466, "lon": -73.9987782, "cat": "Shop"}, {"name": "Greenwich Letterpress", "desc": "", "lat": 40.7340613, "lon": -74.0005639, "cat": "Shop"}, {"name": "niconeco zakkaya", "desc": "", "lat": 40.7285288, "lon": -73.9832614, "cat": "Shop"}, {"name": "Loaf on Paper by niconeco zakkaya", "desc": "", "lat": 40.7156481, "lon": -73.9650005, "cat": "Shop"}, {"name": "Yoseka Stationery", "desc": "", "lat": 40.7285107, "lon": -73.959155, "cat": "Shop"}, {"name": "Bill's Place", "desc": "Jazz place", "lat": 40.8133745, "lon": -73.9436433, "cat": "Bar"}, {"name": "Spectacle", "desc": "", "lat": 40.7125413, "lon": -73.9628444, "cat": "Sight"}, {"name": "Spring Street", "desc": "Little Italy Chinatown walking tour", "lat": 40.7244276, "lon": -74.0018862, "cat": "Sight"}, {"name": "McGee's Pub", "desc": "McGee's pub infront tour of movies location.", "lat": 40.7649602, "lon": -73.9828785, "cat": "Sight"}, {"name": "Circle Line Sightseeing Cruises - Midtown", "desc": "", "lat": 40.7628574, "lon": -74.0015034, "cat": "Sight"}, {"name": "Big Bus Tours New York", "desc": "", "lat": 40.7598492, "lon": -73.9838705, "cat": "Sight"}, {"name": "Comedy Cellar", "desc": "", "lat": 40.7302002, "lon": -74.0005639, "cat": "Bar"}, {"name": "Hadestown", "desc": "Walter Kerr Theater", "lat": 40.760724, "lon": -73.985667, "cat": "Shop"}, {"name": "Hamilton", "desc": "Richard Rodgers Theatre", "lat": 40.7590916, "lon": -73.9865404, "cat": "Shop"}, {"name": "Blue Note Jazz Club", "desc": "", "lat": 40.7309083, "lon": -74.0006557, "cat": "Bar"}, {"name": "TKTS Lincoln Center", "desc": "comprar entradas de broadway", "lat": 40.771079, "lon": -73.9827734, "cat": "Shop"}, {"name": "Pier 11 / Wall St.", "desc": "De acá en teoría sale un ferry gratuito que te lleva al IKEA en Red Hook", "lat": 40.7032688, "lon": -74.006215, "cat": "Shop"}, {"name": "Birdland Jazz Club", "desc": "", "lat": 40.7590889, "lon": -73.9897175, "cat": "Bar"}, {"name": "Línea 1", "desc": "", "lat": 40.7642736, "lon": -73.9729927, "cat": "Transit"}, {"name": "Línea 2", "desc": "", "lat": 40.7422894, "lon": -74.0087294, "cat": "Transit"}, {"name": "Línea 3", "desc": "", "lat": 40.7252409, "lon": -73.9922116, "cat": "Transit"}, {"name": "Línea 4", "desc": "", "lat": 40.7656059, "lon": -73.9762919, "cat": "Transit"}, {"name": "Walk Greene St", "desc": "", "lat": 40.7261053, "lon": -73.9984534, "cat": "Transit"}, {"name": "Le Labo", "desc": "You can make your own perfume", "lat": 40.7230658, "lon": -73.9941234, "cat": "Shop"}];
+
+// ── TRIP CONFIG ──
+let TRIP = { start: new Date(), end: new Date(), totalDays: 15, cityMap: {}, cfg: {}, daily: 120, pool: 1500 };
+
+function saveTripConfig(cfg) {
+  try { localStorage.setItem('nyts_trip', JSON.stringify(cfg)); } catch(e) { showSaveError(); }
+}
+function loadTripConfig() {
+  try { const s = localStorage.getItem('nyts_trip'); if (s) return JSON.parse(s); } catch(e) {}
+  return null;
+}
+
+function dateKey(d) {
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+function parseLocalDate(str) {
+  const [y,m,d] = str.split('-').map(Number);
+  return new Date(y, m-1, d);
+}
+function buildTripFromConfig(cfg) {
+  // Backward compat: old format had ny1Start/ny2End
+  const startStr = cfg.start || cfg.ny1Start;
+  const endStr = cfg.end || cfg.ny2End;
+  const start = parseLocalDate(startStr);
+  const end = parseLocalDate(endStr);
+  const totalDays = Math.round((end - start) / 86400000) + 1;
+  const daily = cfg.daily || 0;
+  const pool = cfg.pool || 0;
+  return { start, end, totalDays, daily, pool, cfg: { start: startStr, end: endStr } };
+}
+function dayIndexToDate(i) {
+  const d = new Date(TRIP.start); d.setDate(d.getDate() + i); return d;
+}
+function todayTripIndex() {
+  const today = new Date(); today.setHours(0,0,0,0);
+  const diff = Math.round((today - TRIP.start) / 86400000);
+  return Math.max(0, Math.min(TRIP.totalDays - 1, diff));
+}
+function getCityForDate(d) { return 'NEW YORK'; }
+function formatDisplayDate(d) {
+  return d.toLocaleDateString('en-US', { weekday:'short', month:'short', day:'numeric' }).toUpperCase();
+}
+
+// ── UTILS ──
+function esc(s) {
+  if (!s) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+function roundCurrency(n) { return Math.round(n * 100) / 100; }
+function fmtCurrency(n) { return n % 1 === 0 ? String(n) : n.toFixed(2); }
+function debounce(fn, ms) { let t; return function(...a) { clearTimeout(t); t = setTimeout(() => fn.apply(this, a), ms); }; }
+const debouncedWishSearch = debounce(() => renderWishlist(), 200);
+const debouncedMapsSearch = debounce(() => renderMaps(), 200);
+
+// ── FOCUS TRAP ──
+let _focusTrapEl = null, _focusTrapPrev = null;
+function trapFocus(screenEl) {
+  _focusTrapPrev = document.activeElement;
+  _focusTrapEl = screenEl;
+  screenEl.addEventListener('keydown', _focusTrapHandler);
+}
+function releaseFocus() {
+  if (_focusTrapEl) _focusTrapEl.removeEventListener('keydown', _focusTrapHandler);
+  if (_focusTrapPrev) _focusTrapPrev.focus();
+  _focusTrapEl = null; _focusTrapPrev = null;
+}
+function _focusTrapHandler(e) {
+  if (e.key !== 'Tab') return;
+  const focusable = _focusTrapEl.querySelectorAll('button,input,textarea,select,[tabindex]:not([tabindex="-1"])');
+  if (!focusable.length) return;
+  const first = focusable[0], last = focusable[focusable.length - 1];
+  if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+  else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+}
+
+// ── TICKET SUCCESS ANIMATION ──
+function showTicketSuccess(actionBtn, onDone) {
+  const chevrons = actionBtn.querySelector('.tkt-action-chevrons');
+  const label = actionBtn.querySelector('.tkt-action-label');
+  const origChevrons = chevrons.textContent, origLabel = label.textContent;
+  chevrons.textContent = '\u2713\u2713\u2713\u2713\u2713\u2713\u2713\u2713\u2713';
+  label.textContent = '\u2713 LOGGED';
+  actionBtn.style.color = '#16a34a';
+  setTimeout(() => {
+    chevrons.textContent = origChevrons; label.textContent = origLabel;
+    actionBtn.style.color = '';
+    if (onDone) onDone();
+  }, 1500);
+}
+
+// ── STATE ──
+let state = {
+  currentDayIndex: 0,
+  selectedExpCat: '1',
+  selectedWishCat: 'TECH',
+  wishFilter: 'ALL',
+  entries: {},
+  wishlist: [],
+};
+
+function loadState() {
+  try {
+    const s = localStorage.getItem('nyts_v1');
+    if (s) { const p = JSON.parse(s); state.entries = p.entries || {}; state.wishlist = p.wishlist || []; }
+  } catch(e) {}
+}
+function saveState() {
+  try { localStorage.setItem('nyts_v1', JSON.stringify({ entries: state.entries, wishlist: state.wishlist })); }
+  catch(e) { showSaveError(); }
+}
+function showSaveError() {
+  const el = document.getElementById('saveErrorToast');
+  if (!el) return;
+  el.textContent = 'Storage full — data not saved';
+  el.classList.add('visible');
+  setTimeout(() => el.classList.remove('visible'), 3000);
+}
+
+// ── SETUP ──
+function showSetup() {
+  document.getElementById('setupScreen').classList.add('active');
+  document.getElementById('homeScreen').classList.remove('home');
+}
+function hideSetup() {
+  document.getElementById('setupScreen').classList.remove('active');
+  document.getElementById('homeScreen').classList.add('home');
+}
+function submitSetup() {
+  const start = document.getElementById('setupStart').value;
+  const end = document.getElementById('setupEnd').value;
+  const daily = parseInt(document.getElementById('setupDaily').value);
+  const pool = parseInt(document.getElementById('setupPool').value);
+  if (!start || !end || isNaN(daily) || isNaN(pool)) {
+    document.getElementById('setupError').textContent = 'Please fill in all fields.'; return;
+  }
+  if (start >= end) {
+    document.getElementById('setupError').textContent = 'Departure must be after arrival.'; return;
+  }
+  const cfg = { start, end, daily, pool };
+  saveTripConfig(cfg);
+  TRIP = buildTripFromConfig(cfg);
+  state.currentDayIndex = todayTripIndex();
+  hideSetup(); renderHome();
+}
+function resetTrip() {
+  const btn = document.getElementById('resetTripBtn');
+  if (resetArmTimer) {
+    clearTimeout(resetArmTimer); resetArmTimer = null;
+    localStorage.clear(); location.reload();
+  } else {
+    btn.textContent = 'Tap again to confirm';
+    btn.style.color = 'var(--red)';
+    resetArmTimer = setTimeout(() => {
+      resetArmTimer = null; btn.textContent = 'Reset all data'; btn.style.color = '';
+    }, 3000);
+  }
+}
+let resetArmTimer = null;
+
+// ── NAVIGATION ──
+let currentScreen = 'home';
+
+function goTo(screen) {
+  document.getElementById('homeScreen').classList.add('behind');
+  document.getElementById('homeScreen').classList.remove('home');
+  document.getElementById(screen + 'Screen').classList.add('active');
+  currentScreen = screen;
+  if (screen === 'budget') renderBudget();
+  if (screen === 'wishlist') renderWishlist();
+  if (screen === 'itinerary') renderItinerary();
+  if (screen === 'summary') renderSummary();
+  if (screen === 'maps') { renderMaps(); requestGeo(); }
+  if (screen === 'notes') renderNotes();
+}
+
+function goHome() {
+  clearPendingDeletes();
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active','behind'));
+  document.getElementById('homeScreen').classList.add('home');
+  currentScreen = 'home';
+  ['addExpenseBar','addWishBar','addNoteBar'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.classList.add('visible');
+  });
+}
+
+// ── HOME ──
+function renderHome() {
+  const today = new Date(); today.setHours(0,0,0,0);
+  document.getElementById('homeDate').textContent = formatDisplayDate(today);
+  document.getElementById('homeCity').textContent = getCityForDate(today);
+}
+
+// ── BUDGET ──
+function changeDay(delta) {
+  state.currentDayIndex = Math.max(0, Math.min(TRIP.totalDays - 1, state.currentDayIndex + delta));
+  renderBudget();
+}
+function getEntries(di) { return state.entries[di] || []; }
+function getDailySpent(di) {
+  return roundCurrency(getEntries(di).filter(e => !CAT_POOL[e.cat]).reduce((s,e) => s + e.amount, 0));
+}
+function getShopSpent() {
+  return roundCurrency(Object.values(state.entries).flat().filter(e => CAT_POOL[e.cat]).reduce((s,e) => s + e.amount, 0));
+}
+function getTotalSpent() {
+  return roundCurrency(Object.values(state.entries).flat().reduce((s,e) => s + e.amount, 0));
+}
+
+function renderBudget() {
+  const di = state.currentDayIndex;
+  const d = dayIndexToDate(di);
+  const city = getCityForDate(d);
+  const DAILY = TRIP.daily, POOL = TRIP.pool;
+
+  document.getElementById('budgetCityLabel').textContent = 'New York';
+  document.getElementById('dayStripDate').textContent = formatDisplayDate(d);
+  document.getElementById('dayStripSub').textContent = `DAY ${di+1} OF ${TRIP.totalDays} · ${city}`;
+
+  const dailySpent = getDailySpent(di), dailyLeft = DAILY - dailySpent;
+  const dailyPct = Math.min(100, (dailySpent / DAILY) * 100);
+  const shopSpent = getShopSpent(), shopLeft = POOL - shopSpent;
+  const shopPct = Math.min(100, (shopSpent / POOL) * 100);
+
+  const dlEl = document.getElementById('dailyLeft');
+  dlEl.textContent = Math.max(0, Math.round(dailyLeft));
+  dlEl.className = 'bp-amount' + (dailyLeft < 0 ? ' danger' : dailyLeft < 30 ? ' warn' : '');
+  document.getElementById('dailySub').textContent = `$${Math.round(dailySpent)} spent of $${DAILY}`;
+  const df = document.getElementById('dailyFill');
+  df.style.width = dailyPct + '%';
+  df.className = 'bp-fill' + (dailyPct > 90 ? ' danger' : dailyPct > 70 ? ' warn' : '');
+
+  const slEl = document.getElementById('shopLeft');
+  slEl.textContent = Math.max(0, Math.round(shopLeft));
+  slEl.className = 'bp-amount' + (shopLeft < 100 ? ' danger' : shopLeft < 300 ? ' warn' : '');
+  document.getElementById('shopSub').textContent = `$${Math.round(shopSpent)} spent of $${POOL}`;
+  const sf = document.getElementById('shopFill');
+  sf.style.width = shopPct + '%';
+  sf.className = 'bp-fill' + (shopPct > 90 ? ' danger' : shopPct > 70 ? ' warn' : '');
+
+  const scroll = document.getElementById('entriesScroll');
+  const empty = document.getElementById('entriesEmpty');
+  [...scroll.querySelectorAll('.stub')].forEach(el => el.remove());
+  const entries = getEntries(di);
+  if (entries.length === 0) { empty.style.display = 'block'; return; }
+  empty.style.display = 'none';
+
+  entries.forEach(entry => {
+    const stub = document.createElement('div');
+    stub.className = 'stub';
+    const isPool = CAT_POOL[entry.cat];
+    stub.innerHTML = `
+      <div class="stub-top">
+        <div class="dot sm" style="background:${CAT_COLORS[entry.cat] || 'var(--gray)'}">${esc(entry.cat)}</div>
+        <div class="stub-name">${esc(entry.desc)}</div>
+        <div class="stub-amount">$${fmtCurrency(entry.amount)}</div>
+      </div>
+      <div class="stub-tear">
+        <span class="stub-meta">${formatDisplayDate(d)} · ${city}</span>
+        <span class="stub-tag">${isPool ? 'POOL' : 'DAILY'}</span>
+      </div>`;
+    stub.addEventListener('click', () => armDelete(`exp-${entry.id}`, () => deleteEntry(di, entry.id), stub));
+    scroll.appendChild(stub);
+  });
+}
+
+function openExpenseSheet() {
+  document.getElementById('budgetScreen').classList.add('behind');
+  document.getElementById('ticketScreen').classList.add('active');
+  document.getElementById('addExpenseBar').classList.remove('visible');
+  currentScreen = 'ticket';
+  trapFocus(document.getElementById('ticketScreen'));
+  setTimeout(() => document.getElementById('expAmountInput').focus(), 350);
+}
+function closeExpenseSheet() {
+  releaseFocus();
+  document.getElementById('ticketScreen').classList.remove('active');
+  document.getElementById('budgetScreen').classList.remove('behind');
+  document.getElementById('addExpenseBar').classList.add('visible');
+  currentScreen = 'budget';
+}
+function selectExpCat(el) {
+  document.querySelectorAll('.cat-dot-btn').forEach(b => b.classList.remove('selected'));
+  el.classList.add('selected');
+  state.selectedExpCat = el.dataset.cat;
+}
+function addExpense() {
+  const desc = document.getElementById('expDescInput').value.trim();
+  const amt = parseFloat(document.getElementById('expAmountInput').value);
+  if (!desc || isNaN(amt) || amt <= 0) {
+    document.getElementById('expDescInput').style.borderColor = 'var(--red)';
+    setTimeout(() => document.getElementById('expDescInput').style.borderColor = '', 800);
+    return;
+  }
+  const cat = String(state.selectedExpCat);
+  if (!CAT_COLORS[cat]) { state.selectedExpCat = '1'; return; }
+  const di = state.currentDayIndex;
+  if (!state.entries[di]) state.entries[di] = [];
+  state.entries[di].unshift({ id: Date.now(), desc, amount: roundCurrency(amt), cat });
+  saveState();
+  document.getElementById('expDescInput').value = '';
+  document.getElementById('expAmountInput').value = '';
+  const actionBtn = document.querySelector('#ticketScreen .tkt-action');
+  checkBackupReminder();
+  showTicketSuccess(actionBtn, () => { closeExpenseSheet(); renderBudget(); });
+}
+function deleteEntry(dayIndex, id) {
+  state.entries[dayIndex] = (state.entries[dayIndex] || []).filter(e => e.id !== id);
+  saveState(); renderBudget();
+}
+
+// ── WISHLIST ──
+function setWishFilter(el) {
+  document.querySelectorAll('#wishlistScreen .filter-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  state.wishFilter = el.dataset.filter;
+  renderWishlist();
+}
+function renderWishlist() {
+  const search = (document.getElementById('wishSearch')?.value || '').toLowerCase();
+  const filter = state.wishFilter;
+  const scroll = document.getElementById('wishlistScroll');
+  scroll.innerHTML = '';
+  let items = state.wishlist;
+  if (filter !== 'ALL') items = items.filter(i => i.cat === filter);
+  if (search) items = items.filter(i => i.name.toLowerCase().includes(search));
+  const total = state.wishlist.length;
+  const done = state.wishlist.filter(i => i.done).length;
+  document.getElementById('wishCount').textContent = `${done}/${total} checked`;
+  if (items.length === 0) {
+    scroll.innerHTML = '<div class="empty-state"><div class="empty-text">Nothing here yet</div></div>'; return;
+  }
+  items.forEach(item => {
+    const el = document.createElement('div');
+    el.className = 'wish-item' + (item.done ? ' done' : '');
+    el.innerHTML = `
+      <div class="wish-check ${item.done?'checked':''}" onclick="toggleWish(${item.id})"></div>
+      <div class="wish-name">${esc(item.name)}</div>
+      ${item.price != null ? `<div class="wish-price">$${fmtCurrency(item.price)}</div>` : ''}
+      <div class="wish-cat-tag">${esc(item.cat)}</div>
+      <button class="wish-del" onclick="armDelete('wish-${item.id}', () => deleteWish(${item.id}), this)">✕</button>`;
+    scroll.appendChild(el);
+  });
+}
+function toggleWish(id) {
+  const item = state.wishlist.find(i => i.id === id);
+  if (item) { item.done = !item.done; saveState(); renderWishlist(); }
+}
+function deleteWish(id) {
+  state.wishlist = state.wishlist.filter(i => i.id !== id);
+  saveState(); renderWishlist();
+}
+function openWishTicket() {
+  document.getElementById('wishlistScreen').classList.add('behind');
+  document.getElementById('wishTicketScreen').classList.add('active');
+  document.getElementById('addWishBar').classList.remove('visible');
+  state.selectedWishCat = 'TECH';
+  document.querySelectorAll('#wishTicketScreen .cat-dot-btn').forEach(b => b.classList.remove('selected'));
+  document.querySelector('#wishTicketScreen .cat-dot-btn[data-wcat="TECH"]').classList.add('selected');
+  document.getElementById('wishTktCatLabel').textContent = 'Tech';
+  currentScreen = 'wishTicket';
+  trapFocus(document.getElementById('wishTicketScreen'));
+  setTimeout(() => document.getElementById('wishNameInput').focus(), 350);
+}
+function closeWishTicket() {
+  releaseFocus();
+  document.getElementById('wishTicketScreen').classList.remove('active');
+  document.getElementById('wishlistScreen').classList.remove('behind');
+  document.getElementById('addWishBar').classList.add('visible');
+  currentScreen = 'wishlist';
+}
+function selectWishCat(el) {
+  document.querySelectorAll('#wishTicketScreen .cat-dot-btn').forEach(b => b.classList.remove('selected'));
+  el.classList.add('selected');
+  state.selectedWishCat = el.dataset.wcat;
+  const labelEl = document.getElementById('wishTktCatLabel');
+  if (labelEl) {
+    const names = { TECH:'Tech', BOOKS:'Books', CLOTHES:'Clothes', OTHER:'Other' };
+    labelEl.textContent = names[el.dataset.wcat] || el.dataset.wcat;
+  }
+}
+function addWishItem() {
+  const name = document.getElementById('wishNameInput').value.trim();
+  if (!name) {
+    document.getElementById('wishNameInput').style.outline = '2px solid var(--red)';
+    setTimeout(() => document.getElementById('wishNameInput').style.outline = '', 800); return;
+  }
+  const priceStr = document.getElementById('wishPriceInput').value;
+  const price = priceStr ? parseFloat(priceStr) : null;
+  state.wishlist.push({ id: Date.now(), name, cat: state.selectedWishCat, done: false, price });
+  saveState();
+  document.getElementById('wishNameInput').value = '';
+  document.getElementById('wishPriceInput').value = '';
+  closeWishTicket(); renderWishlist();
+}
+
+// ── ITINERARY ──
+function getItinerary() {
+  try { const s = localStorage.getItem('nyts_itinerary'); if (s) return JSON.parse(s); } catch(e) {}
+  const days = [];
+  for (let i = 0; i < TRIP.totalDays; i++) {
+    const d = new Date(TRIP.start); d.setDate(d.getDate() + i);
+    days.push({ date: dateKey(d), city: getCityForDate(d), free: false, activities: [] });
+  }
+  return days;
+}
+function saveItinerary(data) { try { localStorage.setItem('nyts_itinerary', JSON.stringify(data)); } catch(e) { showSaveError(); } }
+
+function renderItinerary() {
+  const scroll = document.getElementById('itineraryScroll');
+  scroll.innerHTML = '';
+  const today = dateKey(new Date());
+  const data = getItinerary();
+  const s = TRIP.cfg;
+  document.getElementById('itinerarySub').textContent = `${s.start} – ${s.end}`;
+
+  data.forEach((day, dayIdx) => {
+    const card = document.createElement('div');
+    card.className = 'day-card';
+    const d = new Date(day.date + 'T12:00:00');
+    const dateStr = d.toLocaleDateString('en-US', { weekday:'short', month:'short', day:'numeric' }).toUpperCase();
+    const isToday = day.date === today;
+    const badges = [
+      day.free ? '<span class="badge free">Free</span>' : '',
+      isToday ? '<span class="badge today">Today</span>' : '',
+    ].join('');
+
+    const header = document.createElement('div');
+    header.className = 'day-card-hdr';
+    header.innerHTML = `<div><div class="day-card-date">${dateStr}</div><div class="day-card-city">${day.city}</div></div><div class="day-card-badges">${badges}</div>`;
+
+    const body = document.createElement('div');
+    body.className = 'day-card-body';
+
+    function rebuildActivities() {
+      [...body.querySelectorAll('.day-activity,.day-card-add')].forEach(el => el.remove());
+      const allData = getItinerary();
+      const cur = allData[dayIdx];
+      if (!cur) return;
+      cur.activities.forEach((a, actIdx) => {
+        const confirmed = a.includes('✓');
+        const text = a.replace(' ✓','').replace('✓','').trim();
+        const row = document.createElement('div');
+        row.className = 'day-activity';
+        row.innerHTML = `${confirmed ? '<span class="activity-confirmed">✓</span>' : ''}<span class="activity-text">${esc(text)}</span><button class="activity-del" onclick="event.stopPropagation();armDelete('act-${dayIdx}-${actIdx}', () => deleteActivity(${dayIdx},${actIdx}), this)">×</button>`;
+        row.addEventListener('click', function() {
+          if (row.querySelector('.activity-edit-input')) return;
+          const textSpan = row.querySelector('.activity-text');
+          const original = textSpan.textContent;
+          const inp = document.createElement('input');
+          inp.className = 'activity-edit-input'; inp.value = original; inp.type = 'text';
+          textSpan.replaceWith(inp); inp.focus(); inp.select();
+          function commit() {
+            const val = inp.value.trim();
+            if (val && val !== original) {
+              const d2 = getItinerary();
+              d2[dayIdx].activities[actIdx] = val + (confirmed ? ' ✓' : '');
+              saveItinerary(d2);
+            }
+            rebuildActivities();
+          }
+          inp.addEventListener('blur', commit);
+          inp.addEventListener('keydown', e => { if (e.key === 'Enter') inp.blur(); });
+        });
+        body.appendChild(row);
+      });
+      const addBtn = document.createElement('button');
+      addBtn.className = 'day-card-add'; addBtn.textContent = '+ Add activity';
+      addBtn.onclick = () => openActivityTicket(dayIdx);
+      body.appendChild(addBtn);
+    }
+    rebuildActivities();
+    card.appendChild(header); card.appendChild(body);
+    scroll.appendChild(card);
+    if (isToday) setTimeout(() => card.scrollIntoView({ behavior:'smooth', block:'center' }), 100);
+  });
+}
+function deleteActivity(dayIdx, actIdx) {
+  const data = getItinerary(); data[dayIdx].activities.splice(actIdx, 1);
+  saveItinerary(data); renderItinerary();
+}
+
+// ── ACTIVITY TICKET ──
+let currentActivityDayIdx = null;
+function openActivityTicket(dayIdx) {
+  currentActivityDayIdx = dayIdx;
+  const d = dayIndexToDate(dayIdx);
+  document.getElementById('actTktDayLabel').textContent = formatDisplayDate(d);
+  document.getElementById('actTktInput').value = '';
+  document.getElementById('itineraryScreen').classList.add('behind');
+  document.getElementById('activityTicketScreen').classList.add('active');
+  currentScreen = 'activityTicket';
+  trapFocus(document.getElementById('activityTicketScreen'));
+  setTimeout(() => document.getElementById('actTktInput').focus(), 350);
+}
+function closeActivityTicket() {
+  releaseFocus();
+  document.getElementById('activityTicketScreen').classList.remove('active');
+  document.getElementById('itineraryScreen').classList.remove('behind');
+  currentScreen = 'itinerary'; currentActivityDayIdx = null;
+}
+function saveActivity() {
+  const val = document.getElementById('actTktInput').value.trim();
+  if (!val) {
+    document.getElementById('actTktInput').style.outline = '2px solid var(--red)';
+    setTimeout(() => document.getElementById('actTktInput').style.outline = '', 800); return;
+  }
+  const d2 = getItinerary();
+  d2[currentActivityDayIdx].activities.push(val);
+  saveItinerary(d2); closeActivityTicket(); renderItinerary();
+}
+
+// ── SUMMARY ──
+function renderSummary() {
+  const total = getTotalSpent(), shopSpent = getShopSpent();
+  const dailyOnly = total - shopSpent;
+  const daysLogged = Object.keys(state.entries).filter(k => state.entries[k].length > 0).length;
+  const avg = daysLogged > 0 ? dailyOnly / daysLogged : 0;
+  const totalDailyBudget = TRIP.daily * TRIP.totalDays;
+  const totalBudget = totalDailyBudget + TRIP.pool;
+  const totalRemaining = totalBudget - total;
+  const bycat = { '1':0, '2':0, '3':0, '4':0 };
+  Object.values(state.entries).flat().forEach(e => { bycat[e.cat] = (bycat[e.cat]||0) + e.amount; });
+
+  document.getElementById('summaryScroll').innerHTML = `
+    <div class="summary-block">
+      <div class="summary-block-title">Budget Overview</div>
+      <div class="summary-stat"><span class="stat-label">Total budget</span><span class="stat-val">$${totalBudget}</span></div>
+      <div class="summary-stat"><span class="stat-label">Total spent</span><span class="stat-val">$${Math.round(total)}</span></div>
+      <div class="summary-stat"><span class="stat-label">Remaining</span><span class="stat-val${totalRemaining < 0 ? ' style=color:var(--red)' : ''}">$${Math.round(totalRemaining)}</span></div>
+    </div>
+    <div class="summary-block" style="margin-top:16px">
+      <div class="summary-block-title">Trip Totals</div>
+      <div class="summary-stat"><span class="stat-label">Daily average</span><span class="stat-val">$${Math.round(avg)}/day</span></div>
+      <div class="summary-stat"><span class="stat-label">Daily budget</span><span class="stat-val">$${TRIP.daily}/day × ${TRIP.totalDays} days = $${totalDailyBudget}</span></div>
+      <div class="summary-stat"><span class="stat-label">Shopping used</span><span class="stat-val">$${Math.round(shopSpent)} / $${TRIP.pool}</span></div>
+      <div class="summary-stat"><span class="stat-label">Shopping left</span><span class="stat-val">$${Math.round(TRIP.pool - shopSpent)}</span></div>
+      <div class="summary-stat"><span class="stat-label">Days logged</span><span class="stat-val">${daysLogged}</span></div>
+    </div>
+    <div class="summary-block" style="margin-top:16px">
+      <div class="summary-block-title">By Category</div>
+      ${Object.entries(bycat).filter(([,v]) => v > 0).sort((a,b) => b[1] - a[1]).map(([cat,amt]) => `
+        <div class="cat-stat-row">
+          <div class="dot sm" style="background:${CAT_COLORS[cat]}">${cat}</div>
+          <div class="cat-stat-name">${CAT_NAMES[cat]}</div>
+          <div class="cat-stat-amt">$${Math.round(amt)}</div>
+        </div>`).join('')}
+      ${Object.values(bycat).every(v => v === 0) ? '<div class="empty-text" style="padding:20px 0">No data yet</div>' : ''}
+    </div>`;
+}
+
+// ── MAPS ──
+let mapsFilter = 'ALL';
+let userLat = null, userLon = null;
+
+function haversine(lat1, lon1, lat2, lon2) {
+  const R = 6371000;
+  const dLat = (lat2-lat1)*Math.PI/180, dLon = (lon2-lon1)*Math.PI/180;
+  const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)**2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+}
+function formatDist(m) { return m < 1000 ? Math.round(m) + 'm' : (m/1000).toFixed(1) + 'km'; }
+
+function setMapsFilter(el) {
+  document.querySelectorAll('#mapsFilterRow .filter-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active'); mapsFilter = el.dataset.filter; renderMaps();
+}
+function getPlaces() {
+  try { const s = localStorage.getItem('nyts_places'); if (s) return JSON.parse(s); } catch(e) {}
+  return PLACES_DATA;
+}
+
+function renderMaps() {
+  const scroll = document.getElementById('mapsScroll');
+  const search = (document.getElementById('mapsSearch')?.value || '').toLowerCase();
+  let places = getPlaces();
+
+  if (!places || places.length === 0) {
+    scroll.innerHTML = '<div class="empty-state" style="padding:60px 24px;text-align:center;"><div class="empty-text">Import your KMZ file below</div></div>';
+    document.getElementById('importLabel').textContent = 'Import KMZ / KML file →'; return;
+  }
+
+  document.getElementById('importLabel').textContent = `${places.length} places loaded · Re-import →`;
+  document.getElementById('mapsSubtitle').textContent = userLat ? 'Sorted by distance' : 'Import KMZ to start';
+
+  let filtered = places;
+  if (mapsFilter !== 'ALL') filtered = filtered.filter(p => p.cat === mapsFilter);
+  if (search) filtered = filtered.filter(p => p.name.toLowerCase().includes(search) || (p.desc||'').toLowerCase().includes(search));
+
+  if (userLat !== null) {
+    filtered = filtered.map(p => ({ ...p, dist: haversine(userLat, userLon, p.lat, p.lon) })).sort((a,b) => a.dist - b.dist);
+  }
+
+  if (filtered.length === 0) {
+    scroll.innerHTML = '<div class="empty-state"><div class="empty-text">No places found</div></div>'; return;
+  }
+
+  scroll.innerHTML = '';
+  filtered.slice(0, 100).forEach(p => {
+    const a = document.createElement('a');
+    a.className = 'place-row';
+    a.href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(p.name)}&query_place_ll=${p.lat},${p.lon}`;
+    a.target = '_blank';
+    const catLabel = p.cat === 'Museum' ? 'MUS' : p.cat === 'Sight' ? 'SHT' : p.cat.substring(0,3).toUpperCase();
+    const distStr = p.dist !== undefined ? `<div class="place-dist">${formatDist(p.dist)}</div>` : '';
+    a.innerHTML = `<div class="place-cat-dot ${esc(p.cat)}">${esc(catLabel)}</div><div class="place-info"><div class="place-name">${esc(p.name)}</div>${p.desc ? `<div class="place-desc">${esc(p.desc)}</div>` : ''}</div>${distStr}`;
+    scroll.appendChild(a);
+  });
+
+  if (filtered.length > 100) {
+    const note = document.createElement('div');
+    note.style.cssText = 'padding:16px 20px;font-family:var(--font-display);font-size:12px;letter-spacing:2px;opacity:0.3;text-align:center;';
+    note.textContent = `SHOWING 100 OF ${filtered.length} — USE SEARCH TO FILTER`;
+    scroll.appendChild(note);
+  }
+}
+
+async function importKML(event) {
+  const file = event.target.files[0]; if (!file) return;
+  const label = document.getElementById('importLabel');
+  const bar = document.getElementById('importPlacesBar');
+  bar.style.pointerEvents = 'none'; bar.style.opacity = '0.5';
+  label.textContent = 'Reading file...';
+  try {
+    let text;
+    if (file.name.endsWith('.kmz')) {
+      label.textContent = 'KMZ detected — extracting...';
+      if (!window.JSZip) {
+        await new Promise((resolve, reject) => {
+          const s = document.createElement('script');
+          s.src = 'https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js';
+          s.onload = resolve; s.onerror = reject; document.head.appendChild(s);
+        });
+      }
+      const buf = await file.arrayBuffer();
+      const zip = await JSZip.loadAsync(buf);
+      const kmlFile = Object.keys(zip.files).find(f => f.endsWith('.kml'));
+      if (!kmlFile) throw new Error('No KML in KMZ');
+      text = await zip.files[kmlFile].async('string');
+    } else { text = await file.text(); }
+
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(text, 'text/xml');
+    const placemarks = doc.querySelectorAll('Placemark');
+    const catMap = {
+      '1577':'Food','1899':'Food','1816':'Food','1534':'Food',
+      '1517':'Bar','1649':'Bar','1782':'Bar',
+      '1684':'Shop','1526':'Shop','1561':'Shop','1637':'Shop',
+      '1535':'Sight','1636':'Museum','1720':'Park',
+      '1635':'Sight','1881':'Sight','1532':'Sight','1540':'Sight',
+      '1596':'Sight','1602':'Hotel','000000':'Transit',
+    };
+    const places = [];
+    placemarks.forEach(pm => {
+      const name = pm.querySelector('name')?.textContent?.trim() || '';
+      const desc = pm.querySelector('description')?.textContent?.trim() || '';
+      const coordsEl = pm.querySelector('coordinates');
+      const styleUrl = pm.querySelector('styleUrl')?.textContent?.trim() || '';
+      if (!coordsEl || !name) return;
+      const parts = coordsEl.textContent.trim().split(',');
+      const lon = parseFloat(parts[0]), lat = parseFloat(parts[1]);
+      if (isNaN(lat) || isNaN(lon)) return;
+      const iconMatch = styleUrl.match(/icon-(\d+)/);
+      const icon = iconMatch ? iconMatch[1] : '';
+      places.push({ name, desc, lat, lon, cat: catMap[icon] || 'Other' });
+    });
+    localStorage.setItem('nyts_places', JSON.stringify(places));
+    label.textContent = `${places.length} places imported \u2713`;
+    bar.style.pointerEvents = ''; bar.style.opacity = '';
+    renderMaps(); requestGeo();
+  } catch(e) {
+    bar.style.pointerEvents = ''; bar.style.opacity = '';
+    label.textContent = 'Error reading file — try again'; console.error(e);
+  }
+  event.target.value = '';
+}
+
+function requestGeo() {
+  if (!navigator.geolocation) { document.getElementById('mapsSubtitle').textContent = 'Location not available'; return; }
+  document.getElementById('mapsSubtitle').textContent = 'Locating...';
+  navigator.geolocation.getCurrentPosition(
+    pos => { userLat = pos.coords.latitude; userLon = pos.coords.longitude; document.getElementById('mapsSubtitle').textContent = 'Sorted by distance'; renderMaps(); },
+    err => {
+      const msgs = { 1: 'Location permission denied', 2: 'Location unavailable', 3: 'Location timed out' };
+      document.getElementById('mapsSubtitle').textContent = msgs[err.code] || 'Enable location for distance';
+    }
+  );
+}
+
+// ── NOTES ──
+let editingNoteId = null;
+function getNotes() {
+  try { const s = localStorage.getItem('nyts_notes'); if (s) return JSON.parse(s); } catch(e) {}
+  return [];
+}
+function saveNotes(notes) { try { localStorage.setItem('nyts_notes', JSON.stringify(notes)); } catch(e) { showSaveError(); } }
+
+function renderNotes() {
+  const scroll = document.getElementById('notesScroll');
+  const notes = getNotes();
+  if (notes.length === 0) {
+    scroll.innerHTML = '<div class="empty-state"><div class="empty-text">No notes yet</div></div>'; return;
+  }
+  scroll.innerHTML = '';
+  [...notes].reverse().forEach(note => {
+    const card = document.createElement('div');
+    card.className = 'note-card';
+    const d = new Date(note.ts);
+    const dateStr = d.toLocaleDateString('en-US', { weekday:'short', month:'short', day:'numeric' }).toUpperCase();
+    card.innerHTML = `<button class="note-del" onclick="event.stopPropagation();armDelete('note-${note.id}', () => deleteNote(${note.id}), this)">×</button><div class="note-card-title">${esc(note.title) || 'Untitled'}</div><div class="note-card-body">${esc(note.body) || ''}</div><div class="note-card-meta">${dateStr}</div>`;
+    card.addEventListener('click', () => openNoteTicket(note));
+    scroll.appendChild(card);
+  });
+}
+function openNoteTicket(note) {
+  editingNoteId = note ? note.id : null;
+  document.getElementById('noteTktHeading').textContent = note ? 'EDIT NOTE' : 'NEW NOTE';
+  document.getElementById('noteTktTitle').value = note ? (note.title || '') : '';
+  document.getElementById('noteTktBody').value = note ? (note.body || '') : '';
+  document.getElementById('notesScreen').classList.add('behind');
+  document.getElementById('noteTicketScreen').classList.add('active');
+  document.getElementById('addNoteBar').classList.remove('visible');
+  currentScreen = 'noteTicket';
+  trapFocus(document.getElementById('noteTicketScreen'));
+  setTimeout(() => document.getElementById('noteTktTitle').focus(), 350);
+}
+function closeNoteTicket() {
+  releaseFocus();
+  document.getElementById('noteTicketScreen').classList.remove('active');
+  document.getElementById('notesScreen').classList.remove('behind');
+  document.getElementById('addNoteBar').classList.add('visible');
+  currentScreen = 'notes';
+}
+function saveNote() {
+  const title = document.getElementById('noteTktTitle').value.trim();
+  const body = document.getElementById('noteTktBody').value.trim();
+  if (!title && !body) return;
+  const notes = getNotes();
+  if (editingNoteId) {
+    const n = notes.find(n => n.id === editingNoteId);
+    if (n) { n.title = title; n.body = body; n.ts = Date.now(); }
+  } else {
+    notes.push({ id: Date.now(), title, body, ts: Date.now() });
+  }
+  saveNotes(notes); closeNoteTicket(); renderNotes();
+}
+function deleteNote(id) {
+  saveNotes(getNotes().filter(n => n.id !== id)); renderNotes();
+}
+
+// ── ARM DELETE (tap-to-confirm) ──
+const DELETE_TIMEOUT = 2500;
+let pendingDeletes = {};
+function armDelete(key, callback, indicator) {
+  if (pendingDeletes[key]) {
+    clearTimeout(pendingDeletes[key]);
+    delete pendingDeletes[key];
+    callback();
+  } else {
+    if (indicator) indicator.classList.add('delete-armed');
+    pendingDeletes[key] = setTimeout(() => {
+      delete pendingDeletes[key];
+      if (indicator) indicator.classList.remove('delete-armed');
+    }, DELETE_TIMEOUT);
+  }
+}
+function clearPendingDeletes() {
+  Object.keys(pendingDeletes).forEach(k => { clearTimeout(pendingDeletes[k]); delete pendingDeletes[k]; });
+}
+
+// ── SETTINGS ──
+function openSettings() {
+  document.getElementById('homeScreen').classList.add('behind');
+  document.getElementById('settingsScreen').classList.add('active');
+  currentScreen = 'settings';
+}
+function closeSettings() {
+  document.getElementById('settingsScreen').classList.remove('active');
+  document.getElementById('homeScreen').classList.remove('behind');
+  currentScreen = 'home';
+}
+function exportData() {
+  const data = {
+    nyts_v1: localStorage.getItem('nyts_v1'),
+    nyts_itinerary: localStorage.getItem('nyts_itinerary'),
+    nyts_notes: localStorage.getItem('nyts_notes'),
+    nyts_places: localStorage.getItem('nyts_places'),
+    nyts_trip: localStorage.getItem('nyts_trip'),
+  };
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type:'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url;
+  a.download = 'nyts-backup-' + new Date().toISOString().slice(0,10) + '.json';
+  a.click(); URL.revokeObjectURL(url);
+}
+function importData(event) {
+  const file = event.target.files[0]; if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const data = JSON.parse(e.target.result);
+      const validKeys = ['nyts_v1','nyts_itinerary','nyts_notes','nyts_places','nyts_trip'];
+      const hasValidKey = validKeys.some(k => data[k]);
+      if (!hasValidKey) {
+        const err = document.getElementById('settingsError');
+        if (err) { err.textContent = 'Invalid backup — no NYTS data found'; err.style.display = 'block'; setTimeout(() => err.style.display = 'none', 3000); }
+        return;
+      }
+      validKeys.forEach(k => { if (data[k]) localStorage.setItem(k, data[k]); });
+      location.reload();
+    } catch(err) {
+      const errEl = document.getElementById('settingsError');
+      if (errEl) { errEl.textContent = 'Invalid backup file'; errEl.style.display = 'block'; setTimeout(() => errEl.style.display = 'none', 3000); }
+    }
+  };
+  reader.readAsText(file); event.target.value = '';
+}
+
+// ── BACKUP REMINDER ──
+let expenseCount = 0;
+function checkBackupReminder() {
+  expenseCount++;
+  if (expenseCount % 10 === 0) {
+    const el = document.getElementById('saveErrorToast');
+    if (el) { el.textContent = 'Back up your data in Settings'; el.style.background = 'var(--blue)'; el.classList.add('visible'); setTimeout(() => { el.classList.remove('visible'); el.style.background = ''; }, 3000); }
+  }
+}
+
+// ── SWIPE GESTURE (Budget day navigation) ──
+let touchStartX = 0;
+document.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; });
+document.addEventListener('touchend', e => {
+  if (currentScreen !== 'budget') return;
+  const dx = e.changedTouches[0].clientX - touchStartX;
+  if (Math.abs(dx) > 80) changeDay(dx < 0 ? 1 : -1);
+});
+
+// ── KEYBOARD NAV ──
+document.addEventListener('keydown', e => {
+  if (currentScreen === 'budget' && !e.target.closest('input,textarea')) {
+    if (e.key === 'ArrowLeft') { e.preventDefault(); changeDay(-1); }
+    if (e.key === 'ArrowRight') { e.preventDefault(); changeDay(1); }
+  }
+  if (e.key === 'Escape') {
+    if (currentScreen === 'ticket') closeExpenseSheet();
+    else if (currentScreen === 'wishTicket') closeWishTicket();
+    else if (currentScreen === 'activityTicket') closeActivityTicket();
+    else if (currentScreen === 'noteTicket') closeNoteTicket();
+    else if (currentScreen !== 'home') goHome();
+  }
+});
+
+// ── INIT ──
+loadState();
+const savedCfg = loadTripConfig();
+if (savedCfg) {
+  TRIP = buildTripFromConfig(savedCfg);
+  state.currentDayIndex = todayTripIndex();
+  renderHome(); renderWishlist();
+} else {
+  showSetup(); renderWishlist();
+}
+
+// ── SERVICE WORKER ──
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js').catch(() => {});
+}
+</script>
+</body>
+</html>
